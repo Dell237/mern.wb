@@ -1,19 +1,25 @@
-import express from "express";
-import bodyParser from "body-parser";
-import cors from "cors";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-dotenv.config();
-import usersRoutes from "./routes/users.js";
-
+const express = require("express");
 const app = express();
+require("dotenv").config();
+require("express-async-errors");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const mongoose = require("mongoose");
+const authRouter = require("./routes/users");
+const dealeRouter = require("./routes/deales");
+const auth = require("./middleware/auth");
+// error handler
+const notFoundMiddleware = require("./middleware/not-found");
+const errorHandlerMiddleware = require("./middleware/error-handler");
 
-app.use(bodyParser.json({ limit: "20mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "20mb", extended: true }));
-
+app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/all", auth, dealeRouter);
 
-app.use("/users", usersRoutes);
+app.use(notFoundMiddleware);
+app.use(errorHandlerMiddleware);
 
 const PORT = process.env.PORT || 5000;
 

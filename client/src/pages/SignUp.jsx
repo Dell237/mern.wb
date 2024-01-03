@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import { useCreateUsersMutation } from "../features/api/apiSlice";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { regUser } from "../features/api/apiSlice";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -8,18 +9,32 @@ const SignUp = () => {
     email: "",
     password: "",
   });
-  const [createUser] = useCreateUsersMutation();
+  const { isLoading } = useSelector((store) => store.user);
   const navigate = useNavigate();
+  const userRef = useRef();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (!isLoading) {
+      userRef.current.focus();
+    }
+  }, []);
+
   const handelChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
   const handelSubmit = async (e) => {
     e.preventDefault();
-    createUser(formData);
+
+    await dispatch(regUser(formData));
     setFormData({ username: "", email: "", password: "" });
     navigate("/Sign-In");
   };
-  return (
+
+  return isLoading ? (
+    <h2 className="flex mt-4 justify-center font-extrabold text-green-600">
+      is Loading ....
+    </h2>
+  ) : (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-6 ">Sign Up</h1>
       <form className="flex flex-col gap-4" onSubmit={handelSubmit}>
@@ -31,6 +46,9 @@ const SignUp = () => {
           placeholder="username"
           className="bg-slate-100 p-3 rounded-lg"
           onChange={handelChange}
+          autoComplete="off"
+          ref={userRef}
+          required
         />
         <input
           type="text"
@@ -40,6 +58,8 @@ const SignUp = () => {
           placeholder="email"
           className="bg-slate-100 p-3 rounded-lg"
           onChange={handelChange}
+          autoComplete="off"
+          required
         />
         <input
           type="password"
@@ -49,6 +69,8 @@ const SignUp = () => {
           placeholder="password"
           className="bg-slate-100 p-3 rounded-lg"
           onChange={handelChange}
+          autoComplete="off"
+          required
         />
 
         <button
