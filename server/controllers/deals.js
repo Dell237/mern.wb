@@ -1,12 +1,11 @@
 const { StatusCodes } = require("http-status-codes");
 const Deal = require("../models/Deals");
 const { NotFoundError, BadRequestError } = require("../errors");
+const mongoose = require("mongoose");
 
 const getAllDeals = async (req, res) => {
-  const deals = await Deal.find({ createdBy: req.user.userId }).sort(
-    "createdAt"
-  );
-  res.status(StatusCodes.OK).json({ deals, count: deals.length });
+  const deals = await Deal.find().sort("createdAt");
+  res.status(StatusCodes.OK).json(deals);
 };
 
 const createDeal = async (req, res) => {
@@ -64,10 +63,26 @@ const updateDeal = async (req, res) => {
   res.status(StatusCodes.OK).json({ deal });
 };
 
+const likeDeal = async (req, res) => {
+  const { id: _id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(_id))
+    return res.status(404).send(`No post with id: ${_id}`);
+
+  const deal = await Deal.findById(_id);
+  const updatedDeal = await Deal.findByIdAndUpdate(
+    _id,
+    { likeCount: deal.likeCount + 1 },
+    { new: true }
+  );
+  res.json(updatedDeal);
+};
+
 module.exports = {
   getAllDeals,
   createDeal,
   getDeal,
   deleteDeal,
   updateDeal,
+  likeDeal,
 };

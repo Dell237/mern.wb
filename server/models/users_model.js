@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "please provide password"],
     },
+    profileBild: {
+      type: String,
+      default:
+        "https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg",
+    },
   },
   { timestamps: true }
 );
@@ -53,4 +58,4 @@ userSchema.methods.comparePassword = async function (ps) {
   return check;
 };
 
-module.exports = mongoose.model("UserSchema", userSchema);
+module.exports = mongoose.model("User", userSchema);

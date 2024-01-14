@@ -35,7 +35,14 @@ const login = async (req, res) => {
 
     maxAge: 24 * 60 * 60 * 1000,
   });
-  res.status(StatusCodes.OK).json({ user: { username: user.username }, token });
+  res.status(StatusCodes.OK).json({
+    user: {
+      username: user.username,
+      email: user.email,
+      profileBild: user.profileBild,
+    },
+    token,
+  });
 };
 
 const logout = async (req, res) => {
