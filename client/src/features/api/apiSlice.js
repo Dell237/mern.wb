@@ -41,6 +41,19 @@ export const loginUser = createAsyncThunk(
     }
   }
 );
+
+export const logOut = createAsyncThunk("user/logOut", async () => {
+  try {
+    const resp = await axios.post(`${url}/logout`);
+    localStorage.removeItem("jwt");
+    return resp.data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "something went wrong, you are not logged!"
+    );
+  }
+});
+
 const initialState = {
   user: null,
   isLoading: false,
@@ -77,6 +90,18 @@ export const apiSlice = createSlice({
         state.user = action.payload.user;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        console.log(action);
+        state.isLoading = false;
+      })
+      .addCase(logOut.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(logOut.fulfilled, (state, action) => {
+        console.log(action);
+        state.isLoading = false;
+        state.user = action.payload.user;
+      })
+      .addCase(logOut.rejected, (state, action) => {
         console.log(action);
         state.isLoading = false;
       });

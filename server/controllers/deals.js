@@ -44,11 +44,11 @@ const deleteDeal = async (req, res) => {
 
 const updateDeal = async (req, res) => {
   const {
-    body: { headline, preis },
+    body: { headline, preis, link },
     user: { userId },
     params: { id: dealId },
   } = req;
-  if (headline === "" || preis === "") {
+  if (headline === "" || preis === "" || link === "") {
     throw new BadRequestError("Company or Position can not be empty");
   }
   // const job = Job.findByIdAndUpdate({which job we going to update},what we want update, option: {we get the new updated job, runValidators})

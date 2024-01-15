@@ -1,12 +1,18 @@
 import React, { useRef } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { logOut } from "../features/api/apiSlice";
 
 const Profile = () => {
   const { user, isLoading } = useSelector((state) => state.user);
   const fileRef = useRef(null);
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  };
+  const handleSignOut = async (e) => {
+    e.preventDefault();
+    await dispatch(logOut());
   };
 
   return (
@@ -50,7 +56,9 @@ const Profile = () => {
       </form>
       <div className="flex justify-between mt-5">
         <span className="text-red-700 cursor-pointer">Delete Account</span>
-        <span className="text-red-700 cursor-pointer">Sign out</span>
+        <span className="text-red-700 cursor-pointer" onClick={handleSignOut}>
+          Sign out
+        </span>
       </div>
     </div>
   );

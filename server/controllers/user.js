@@ -54,7 +54,7 @@ const logout = async (req, res) => {
       maxAge: 0,
     })
     .status(StatusCodes.OK)
-    .json({ message: "logout!" });
+    .json({ message: "You've been logged out!" });
 };
 
 module.exports = { register, login, logout };
