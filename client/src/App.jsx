@@ -9,16 +9,8 @@ import {
   CreateDeal,
   PrivatRoute,
 } from "./components/index";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { getDeals } from "./features/api/dealSlice";
 
 const App = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getDeals());
-  }, []);
   return (
     <Router>
       <Navbar />

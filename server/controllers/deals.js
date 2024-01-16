@@ -2,6 +2,7 @@ const { StatusCodes } = require("http-status-codes");
 const Deal = require("../models/Deals");
 const { NotFoundError, BadRequestError } = require("../errors");
 const mongoose = require("mongoose");
+const Like = require("../models/Like");
 
 const getAllDeals = async (req, res) => {
   const deals = await Deal.find().sort("createdAt");
@@ -22,7 +23,7 @@ const getDeal = async (req, res) => {
   } = req;
   const deal = await Deal.findOne({ _id: dealId, createdBy: userId });
   if (!deal) {
-    throw new NotFoundError(`No job with id ${dealId}`);
+    throw new NotFoundError(`Kein Deal mit id: ${dealId}`);
   }
   res.status(StatusCodes.OK).json({ deal });
 };
@@ -37,7 +38,7 @@ const deleteDeal = async (req, res) => {
     createdBy: userId,
   });
   if (!deal) {
-    throw new NotFoundError(`No job with id ${dealId}`);
+    throw new NotFoundError(`Kein Deal mit id: ${dealId}`);
   }
   res.status(StatusCodes.OK).send();
 };
@@ -49,7 +50,7 @@ const updateDeal = async (req, res) => {
     params: { id: dealId },
   } = req;
   if (headline === "" || preis === "" || link === "") {
-    throw new BadRequestError("Company or Position can not be empty");
+    throw new BadRequestError("titel, preis  or link darf nicht leer sein");
   }
   // const job = Job.findByIdAndUpdate({which job we going to update},what we want update, option: {we get the new updated job, runValidators})
   const deal = await Deal.findByIdAndUpdate(
@@ -58,24 +59,9 @@ const updateDeal = async (req, res) => {
     { new: true, runValidators: true }
   );
   if (!deal) {
-    throw new NotFoundError(`No job with id ${dealId}`);
+    throw new NotFoundError(`Kein Deal mit id: ${dealId}`);
   }
   res.status(StatusCodes.OK).json({ deal });
-};
-
-const likeDeal = async (req, res) => {
-  const { id: _id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(_id))
-    return res.status(404).send(`No post with id: ${_id}`);
-
-  const deal = await Deal.findById(_id);
-  const updatedDeal = await Deal.findByIdAndUpdate(
-    _id,
-    { likeCount: deal.likeCount + 1 },
-    { new: true }
-  );
-  res.json(updatedDeal);
 };
 
 module.exports = {
@@ -84,5 +70,4 @@ module.exports = {
   getDeal,
   deleteDeal,
   updateDeal,
-  likeDeal,
 };

@@ -28,9 +28,10 @@ const DealsSchema = mongoose.Schema(
     },
     createdBy: {
       type: mongoose.Types.ObjectId,
-      ref: "UserSchema",
+      ref: "User",
       required: [true, "Please provide user"],
     },
+
     selectedFile: String,
   },
   { timestamps: true }

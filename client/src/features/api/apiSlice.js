@@ -57,6 +57,7 @@ export const logOut = createAsyncThunk("user/logOut", async () => {
 const initialState = {
   user: null,
   isLoading: false,
+  userId: null,
 };
 export const apiSlice = createSlice({
   name: "user",
@@ -88,6 +89,7 @@ export const apiSlice = createSlice({
         console.log(action);
         state.isLoading = false;
         state.user = action.payload.user;
+        state.userId = action.payload.user.userId;
       })
       .addCase(loginUser.rejected, (state, action) => {
         console.log(action);

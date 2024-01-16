@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const authRouter = require("./routes/users");
 const getDealsRouter = require("./routes/getDeals");
 const dealeRouter = require("./routes/deales");
+const likesRouter = require("./routes/likes");
 const auth = require("./middleware/auth");
 // error handler
 const notFoundMiddleware = require("./middleware/not-found");
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1", getDealsRouter);
 app.use("/api/v1/all", auth, dealeRouter);
+app.use("/api/v1/all", auth, likesRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

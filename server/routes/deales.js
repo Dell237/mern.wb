@@ -3,13 +3,11 @@ const {
   getDeal,
   deleteDeal,
   updateDeal,
-  likeDeal,
+  getLikedDeals,
 } = require("../controllers/deals");
 const router = require("express").Router();
 
 router.route("/").post(createDeal);
 router.route("/:id").get(getDeal).delete(deleteDeal).patch(updateDeal);
-
-router.route("/:id/likeDeal").patch(likeDeal);
 
 module.exports = router;

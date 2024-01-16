@@ -32,15 +32,37 @@ export const getDeals = createAsyncThunk("deals/getDeals", async () => {
     return thunkAPI.rejectWithValue("something went wrong");
   }
 });
-export const likeDeal = createAsyncThunk("deals/Like", async (id, thunkAPI) => {
-  try {
-    await userLogged();
-    const resp = await axios.patch(`${url}/all/${id}/likeDeal`);
-    return resp.data;
-  } catch (error) {
-    return thunkAPI.rejectWithValue("something went wrong");
+export const likeDeal = createAsyncThunk(
+  "deals/Like",
+  async ({ currentId, userId }, thunkAPI) => {
+    try {
+      console.log(currentId, userId);
+      await userLogged();
+      const resp = await axios.post(`${url}/all/likeDeal`, {
+        userId,
+        currentId,
+      });
+      return resp.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        "Benutzer hat bereits auf den Beitrag geklickt."
+      );
+    }
   }
-});
+);
+
+export const getLikedDeals = createAsyncThunk(
+  "deals/LikedDeals",
+  async ({ userId }, thunkAPI) => {
+    try {
+      await userLogged();
+      const resp = await axios.get(`${url}/all/liked-deals/${userId}`);
+      return resp.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue("Benutzer hat Keins Likes .");
+    }
+  }
+);
 
 const initialState = {
   dealItem: [],
@@ -77,12 +99,28 @@ export const dealSlice = createSlice({
       })
       .addCase(likeDeal.fulfilled, (state, action) => {
         state.isLoading = false;
-
         state.dealItem.map((deal) =>
           deal._id === action.payload._id ? action.payload : deal
         );
       })
       .addCase(likeDeal.rejected, (state, action) => {
+        state.isLoading = false;
+      })
+      .addCase(getLikedDeals.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getLikedDeals.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+
+        const LikedDeal = state.dealItem.find(
+          (item) => item._id === payload._id
+        );
+
+        // state.dealItem.map((deal) =>
+        //   deal._id === action.payload._id ? (state.Liked = true) : deal
+        // );
+      })
+      .addCase(getLikedDeals.rejected, (state, action) => {
         state.isLoading = false;
       });
   },
