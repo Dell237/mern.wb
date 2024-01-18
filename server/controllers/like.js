@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const { StatusCodes } = require("http-status-codes");
 
 const likeDeal = async (req, res) => {
-  const { userId, currentId: dealId } = req.body;
+  const { dealId, userId } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(dealId))
     return res.status(404).send(`No Deal  with id: ${dealId}`);

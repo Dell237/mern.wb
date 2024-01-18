@@ -101,7 +101,8 @@ export const apiSlice = createSlice({
       .addCase(logOut.fulfilled, (state, action) => {
         console.log(action);
         state.isLoading = false;
-        state.user = action.payload.user;
+        state.user = null;
+        state.userId = null;
       })
       .addCase(logOut.rejected, (state, action) => {
         console.log(action);

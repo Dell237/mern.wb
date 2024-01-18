@@ -8,6 +8,7 @@ import {
   Navbar,
   CreateDeal,
   PrivatRoute,
+  ScrollToTop,
 } from "./components/index";
 
 const App = () => {
@@ -24,6 +25,7 @@ const App = () => {
           <Route path="/About" element={<About />} />
         </Route>
       </Routes>
+      <ScrollToTop />
     </Router>
   );
 };

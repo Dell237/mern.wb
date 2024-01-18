@@ -34,14 +34,10 @@ export const getDeals = createAsyncThunk("deals/getDeals", async () => {
 });
 export const likeDeal = createAsyncThunk(
   "deals/Like",
-  async ({ currentId, userId }, thunkAPI) => {
+  async ({ dealId, userId }, thunkAPI) => {
     try {
-      console.log(currentId, userId);
       await userLogged();
-      const resp = await axios.post(`${url}/all/likeDeal`, {
-        userId,
-        currentId,
-      });
+      const resp = await axios.post(`${url}/all/likeDeal`, { dealId, userId });
       return resp.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -112,9 +108,9 @@ export const dealSlice = createSlice({
       .addCase(getLikedDeals.fulfilled, (state, { payload }) => {
         state.isLoading = false;
 
-        const LikedDeal = state.dealItem.find(
-          (item) => item._id === payload._id
-        );
+        // const LikedDeal = state.dealItem.find(
+        //   (item) => item._id === payload._id
+        // );
 
         // state.dealItem.map((deal) =>
         //   deal._id === action.payload._id ? (state.Liked = true) : deal
