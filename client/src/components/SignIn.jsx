@@ -15,7 +15,16 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-
+import { useNavigate } from "react-router-dom";
+import {
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+} from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
@@ -25,20 +34,30 @@ const SignIn = () => {
     password: "",
   });
   const [errMsg, setErrMsg] = useState("");
-  const [success, setSuccess] = useState(false);
-  const sigInRef = useRef();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isLoading } = useSelector((state) => state.user);
+  const [showPassword, setShowPassword] = useState(false);
+  const [checked, setChecked] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (Data.email === "" || Data.password === "") {
       return setErrMsg("Please provide email and password!");
     }
+    console.log(checked);
+    checked
+      ? ((localStorage.email = Data.email),
+        (localStorage.password = Data.password),
+        (localStorage.checkbox = checked))
+      : (localStorage.removeItem("email"),
+        localStorage.removeItem("password"),
+        (localStorage.checkbox = checked));
+
     try {
       const data = await dispatch(loginUser(Data)).unwrap();
       console.log(data);
-      setSuccess(true);
+      navigate("/");
       setData({ email: "", password: "" });
       return data;
     } catch (error) {
@@ -50,6 +69,16 @@ const SignIn = () => {
   const handelChange = (e) => {
     setData({ ...Data, [e.target.id]: e.target.value });
   };
+
+  useEffect(() => {
+    localStorage.checkbox
+      ? (setData({
+          email: localStorage.email,
+          password: localStorage.password,
+        }),
+        setChecked(Boolean(localStorage.checkbox)))
+      : setChecked(true);
+  }, []);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -96,20 +125,37 @@ const SignIn = () => {
               value={Data.email}
               onChange={handelChange}
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={Data.password}
-              onChange={handelChange}
-            />
+
+            <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
+              <InputLabel htmlFor="password">Password</InputLabel>
+              <OutlinedInput
+                id="password"
+                type={showPassword ? "text" : "password"}
+                value={Data.password}
+                onChange={handelChange}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => setShowPassword((show) => !show)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Password"
+              />
+            </FormControl>
+
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={
+                <Checkbox
+                  checked={checked}
+                  onChange={() => setChecked((check) => !check)}
+                  color="primary"
+                />
+              }
               label="Remember me"
             />
             <Button

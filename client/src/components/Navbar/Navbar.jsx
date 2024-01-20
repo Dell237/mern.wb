@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   AppBar,
@@ -15,13 +15,21 @@ import {
   Avatar,
   Slide,
   useScrollTrigger,
+  Divider,
+  ListItemIcon,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import AdbIcon from "@mui/icons-material/Adb";
+import HolidayVillageIcon from "@mui/icons-material/HolidayVillage";
 import SearchIcon from "@mui/icons-material/Search";
 import { logOut } from "../../features/api/apiSlice";
-import { Offset, Search, SearchIconWrapper, StyledInputBase } from "./styles";
+import { Search, SearchIconWrapper, StyledInputBase } from "./styles";
+import { Logout, PersonAdd } from "@mui/icons-material";
+import { getPostsBySearch } from "../../features/api/dealSlice";
 
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
 const Navbar = () => {
   const pages = ["Home", "Deals", "Gutscheine"];
 
@@ -33,38 +41,76 @@ const Navbar = () => {
 
   const { user } = useSelector((state) => state.user);
   const [anchorElNav, setAnchorElNav] = useState(null);
-  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [search, setSearch] = useState("");
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const query = useQuery();
+
   const trigger = useScrollTrigger();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
   const handleSignOut = async (e) => {
     e.preventDefault();
-    await dispatch(logOut());
+    await handleClose();
+    try {
+      const resp = await dispatch(logOut());
+      navigate("/");
+
+      return resp;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const searchPost = async () => {
+    console.log("searching...");
+    console.log(search.trim());
+    if (search.trim()) {
+      await dispatch(getPostsBySearch({ searchQuery: search }));
+      navigate(`search?searchQuery=${search || "none"}`);
+    } else {
+      navigate("/");
+    }
+  };
+  const handleKeyPress = (e) => {
+    console.log("test");
+    if (search === "" && e.key === 46) {
+      navigate(`search?searchQuery=${"none"}`);
+    }
+    searchPost();
+
+    if (e.keyCode === 13) {
+      console.log("enter");
+      searchPost();
+    } // searchDeal
   };
 
   return (
     <>
       <Toolbar id="back-to-top-anchor" />
       <Slide appear={true} direction="down" in={!trigger}>
-        <AppBar position="fixed" id="back-to-top-anchor">
+        <AppBar position="fixed">
           <Container maxWidth="xl">
             <Toolbar disableGutters>
-              <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+              <HolidayVillageIcon
+                sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
+              />
               <Typography
                 variant="h6"
                 noWrap
@@ -154,6 +200,9 @@ const Navbar = () => {
                   <SearchIcon />
                 </SearchIconWrapper>
                 <StyledInputBase
+                  onKeyDown={handleKeyPress}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search…"
                   inputProps={{ "aria-label": "search" }}
                   sx={{ p: 0, pr: 2 }}
@@ -174,29 +223,83 @@ const Navbar = () => {
                 <Box sx={{ flexGrow: 0 }}>
                   <Tooltip title="Open settings">
                     <IconButton
-                      onClick={handleOpenUserMenu}
-                      sx={{ p: 0, pr: 2 }}
+                      onClick={handleClick}
+                      size="small"
+                      sx={{ ml: 2 }}
+                      aria-controls={open ? "account-menu" : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open ? "true" : undefined}
                     >
-                      <Avatar alt="profile" src={user && user.profileBild} />
+                      <Avatar
+                        sx={{ width: 32, height: 32 }}
+                        alt="profile"
+                        src={user && user.profileBild}
+                      />
                     </IconButton>
                   </Tooltip>
                   <Menu
-                    sx={{ mt: "45px" }}
-                    id="menu-appbar"
-                    anchorEl={anchorElUser}
-                    anchorOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
+                    sx={{ mt: "10px" }}
+                    id="account-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    onClick={handleClose}
+                    slotProps={{
+                      desktopPaper: {
+                        elevation: 0,
+                        sx: {
+                          overflow: "visible",
+                          filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                          mt: 1.5,
+                          "& .MuiAvatar-root": {
+                            width: 32,
+                            height: 32,
+                            ml: -0.5,
+                            mr: 1,
+                          },
+                          "&::before": {
+                            content: '""',
+                            display: "block",
+                            position: "absolute",
+                            top: 0,
+                            right: 14,
+                            width: 10,
+                            height: 10,
+                            bgcolor: "background.paper",
+                            transform: "translateY(-50%) rotate(45deg)",
+                            zIndex: 0,
+                          },
+                        },
+                      },
                     }}
-                    keepMounted
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    open={Boolean(anchorElUser)}
-                    onClose={handleCloseUserMenu}
+                    transformOrigin={{ horizontal: "right", vertical: "top" }}
+                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
                   >
-                    {settings.map((setting) => (
+                    <MenuItem
+                      component={Link}
+                      to="/Profile"
+                      onClick={handleClose}
+                    >
+                      <Avatar /> Profile
+                    </MenuItem>
+                    <MenuItem
+                      component={Link}
+                      to="/create"
+                      onClick={handleClose}
+                    >
+                      <ListItemIcon>
+                        <PersonAdd fontSize="small" />
+                      </ListItemIcon>
+                      Add new Deal
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem onClick={(e) => handleSignOut(e)}>
+                      <ListItemIcon>
+                        <Logout fontSize="small" />
+                      </ListItemIcon>
+                      Logout
+                    </MenuItem>
+                    {/* {settings.map((setting) => (
                       <MenuItem key={setting.id} onClick={handleCloseUserMenu}>
                         <Typography
                           component={Link}
@@ -211,7 +314,7 @@ const Navbar = () => {
                           {setting.titel}
                         </Typography>
                       </MenuItem>
-                    ))}
+                    ))} */}
                   </Menu>
                 </Box>
               )}
@@ -219,7 +322,6 @@ const Navbar = () => {
           </Container>
         </AppBar>
       </Slide>
-      <Offset />
     </>
   );
 

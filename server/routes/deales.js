@@ -3,7 +3,6 @@ const {
   getDeal,
   deleteDeal,
   updateDeal,
-  getLikedDeals,
 } = require("../controllers/deals");
 const router = require("express").Router();
 

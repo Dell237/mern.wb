@@ -16,6 +16,10 @@ const DealsSchema = mongoose.Schema(
       type: String,
       required: [true, "Please provide url"],
     },
+    message: {
+      type: String,
+      required: [true, "Please provide message"],
+    },
     status: {
       type: String,
       enum: ["sold out", "available"],

@@ -7,13 +7,14 @@ const url = "http://localhost:5000/api/v1";
 export const createDeal = createAsyncThunk(
   "deals/create",
 
-  async ({ headline, preis, link, selectedFile }, thunkAPI) => {
+  async ({ headline, preis, link, message, selectedFile }, thunkAPI) => {
     try {
       await userLogged();
       const resp = await axios.post(`${url}/all`, {
         headline,
         preis,
         link,
+        message,
         selectedFile,
       });
 
@@ -56,6 +57,19 @@ export const getLikedDeals = createAsyncThunk(
       return resp.data;
     } catch (error) {
       return thunkAPI.rejectWithValue("Benutzer hat Keins Likes .");
+    }
+  }
+);
+export const getPostsBySearch = createAsyncThunk(
+  "deals/search",
+  async ({ searchQuery }, thunkAPI) => {
+    try {
+      const { data } = await axios.get(
+        `${url}/search?searchQuery=${searchQuery}`
+      );
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue("Ergebnisse: 0");
     }
   }
 );
@@ -117,6 +131,17 @@ export const dealSlice = createSlice({
         // );
       })
       .addCase(getLikedDeals.rejected, (state, action) => {
+        state.isLoading = false;
+      })
+      .addCase(getPostsBySearch.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getPostsBySearch.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.dealItem = payload.data;
+      })
+
+      .addCase(getPostsBySearch.rejected, (state, action) => {
         state.isLoading = false;
       });
   },

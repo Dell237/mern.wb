@@ -1,9 +1,20 @@
 const { StatusCodes } = require("http-status-codes");
 const Deal = require("../models/Deals");
 const { NotFoundError, BadRequestError } = require("../errors");
-const mongoose = require("mongoose");
-const Like = require("../models/Like");
 
+const getPostsBySearch = async (req, res) => {
+  const { searchQuery } = req.query;
+  try {
+    const titel = new RegExp(searchQuery, "i");
+    const deals = await Deal.find({ headline: titel });
+    if (!deals) {
+      throw new NotFoundError(`Kein Deal Name: ${titel}`);
+    }
+    res.status(StatusCodes.OK).json({ data: deals, length: deals.length });
+  } catch (error) {
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
+  }
+};
 const getAllDeals = async (req, res) => {
   const deals = await Deal.find().sort("createdAt");
   res.status(StatusCodes.OK).json(deals);
@@ -65,6 +76,7 @@ const updateDeal = async (req, res) => {
 };
 
 module.exports = {
+  getPostsBySearch,
   getAllDeals,
   createDeal,
   getDeal,
