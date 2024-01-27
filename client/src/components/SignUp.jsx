@@ -52,7 +52,6 @@ const SignUp = () => {
         />
         <input
           type="text"
-          name="email"
           id="email"
           value={formData.email}
           placeholder="email"

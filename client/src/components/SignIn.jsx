@@ -39,13 +39,14 @@ const SignIn = () => {
   const { isLoading } = useSelector((state) => state.user);
   const [showPassword, setShowPassword] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [isValid, setIsValid] = useState(true);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (Data.email === "" || Data.password === "") {
       return setErrMsg("Please provide email and password!");
     }
-    console.log(checked);
     checked
       ? ((localStorage.email = Data.email),
         (localStorage.password = Data.password),
@@ -56,18 +57,22 @@ const SignIn = () => {
 
     try {
       const data = await dispatch(loginUser(Data)).unwrap();
-      console.log(data);
       navigate("/");
       setData({ email: "", password: "" });
       return data;
     } catch (error) {
-      setSuccess(false);
       return setErrMsg(error);
     }
   };
-
+  const validateEmail = (email) => {
+    const pattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+    return pattern.test(email);
+  };
   const handelChange = (e) => {
-    setData({ ...Data, [e.target.id]: e.target.value });
+    const inputEmail = e.target.value;
+
+    setData({ ...Data, [e.target.id]: inputEmail });
+    setIsValid(validateEmail(inputEmail));
   };
 
   useEffect(() => {
@@ -119,11 +124,12 @@ const SignIn = () => {
               fullWidth
               id="email"
               label="Email Address"
-              name="email"
               autoComplete="email"
               autoFocus
               value={Data.email}
               onChange={handelChange}
+              error={!isValid}
+              helperText={!isValid && "Please enter a valid email address."}
             />
 
             <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
@@ -132,7 +138,9 @@ const SignIn = () => {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 value={Data.password}
-                onChange={handelChange}
+                onChange={(e) =>
+                  setData({ ...Data, [e.target.id]: e.target.value })
+                }
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
@@ -163,13 +171,13 @@ const SignIn = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              disabled={isLoading}
+              disabled={isLoading || !isValid}
             >
               {isLoading ? "Loading..." : "Sign In"}
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link href="/forgot-password" variant="body2">
                   Forgot password?
                 </Link>
               </Grid>
