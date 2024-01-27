@@ -28,7 +28,6 @@ const Deals = () => {
       try {
         if (userId !== null && localStorage.getItem("jwt")) {
           const response = await dispatch(getLikedDeals({ userId })).unwrap();
-          console.log(response);
           return await setLikedPosts(response);
         }
       } catch (error) {
@@ -41,7 +40,9 @@ const Deals = () => {
   }, [Like, userId, dispatch]);
 
   const defaultTheme = createTheme();
-  return (
+  return !dealItem.length ? (
+    <CircularProgress />
+  ) : (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
       <Container sx={{ py: 8 }} maxWidth="md">

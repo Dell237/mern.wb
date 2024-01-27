@@ -27,17 +27,8 @@ import { Search, SearchIconWrapper, StyledInputBase } from "./styles";
 import { Logout, PersonAdd } from "@mui/icons-material";
 import { getPostsBySearch } from "../../features/api/dealSlice";
 
-const useQuery = () => {
-  return new URLSearchParams(useLocation().search);
-};
 const Navbar = () => {
   const pages = ["Home", "Deals", "Gutscheine"];
-
-  const settings = [
-    { id: 1, titel: "neu Deal", link: "/create" },
-    { id: 2, titel: "Profile", link: "/Profile" },
-    { id: 3, titel: "abmelden", link: "/" },
-  ];
 
   const { user } = useSelector((state) => state.user);
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -46,7 +37,6 @@ const Navbar = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const query = useQuery();
 
   const trigger = useScrollTrigger();
 
@@ -79,8 +69,6 @@ const Navbar = () => {
   };
 
   const searchPost = async () => {
-    console.log("searching...");
-    console.log(search.trim());
     if (search.trim()) {
       await dispatch(getPostsBySearch({ searchQuery: search }));
       navigate(`search?searchQuery=${search || "none"}`);
@@ -89,14 +77,12 @@ const Navbar = () => {
     }
   };
   const handleKeyPress = (e) => {
-    console.log("test");
     if (search === "" && e.key === 46) {
       navigate(`search?searchQuery=${"none"}`);
     }
     searchPost();
 
     if (e.keyCode === 13) {
-      console.log("enter");
       searchPost();
     } // searchDeal
   };
@@ -184,7 +170,12 @@ const Navbar = () => {
               >
                 Deals
               </Typography>
-              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+              <Box
+                sx={{
+                  flexGrow: 1,
+                  display: { xs: "none", md: "flex" },
+                }}
+              >
                 {pages.map((page) => (
                   <Button
                     key={page}

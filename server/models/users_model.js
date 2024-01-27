@@ -35,6 +35,10 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, hashPassword);
   next();
 });
+userSchema.methods.hashPS = async function (newPassword) {
+  const hashPassword = await bcrypt.genSalt(10);
+  return (newPassword = await bcrypt.hash(newPassword, hashPassword));
+};
 
 userSchema.methods.createJWT = async function () {
   const token = await jwt.sign(
@@ -56,6 +60,13 @@ userSchema.methods.createAccessToken = async function () {
 userSchema.methods.comparePassword = async function (ps) {
   const check = await bcrypt.compare(ps, this.password);
   return check;
+};
+
+userSchema.methods.createForgotPasswordToken = async function (email) {
+  const token = await jwt.sign({ email }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+  return token;
 };
 
 module.exports = mongoose.model("User", userSchema);
