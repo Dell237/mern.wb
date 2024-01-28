@@ -11,6 +11,7 @@ import {
   ScrollToTop,
   ForgotPassword,
   ResetPassword,
+  Favorite,
 } from "./components/index";
 
 const App = () => {
@@ -28,6 +29,7 @@ const App = () => {
           <Route path="/create" element={<CreateDeal />} />
           <Route path="/Profile" element={<Profile />} />
           <Route path="/About" element={<About />} />
+          <Route path="/Favorite" element={<Favorite />} />
         </Route>
       </Routes>
       <ScrollToTop />

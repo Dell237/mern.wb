@@ -9,6 +9,7 @@ import Deals from "./Deals/Deals";
 import ScrollToTop from "./Navbar/ScrollToTop";
 import ForgotPassword from "./ForgotPassword";
 import ResetPassword from "./ResetPassword";
+import Favorite from "./Navbar/Favorite/Favorite";
 export {
   Deals,
   About,
@@ -21,4 +22,5 @@ export {
   ScrollToTop,
   ForgotPassword,
   ResetPassword,
+  Favorite,
 };

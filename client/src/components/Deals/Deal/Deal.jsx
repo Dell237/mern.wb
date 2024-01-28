@@ -9,6 +9,8 @@ import {
   IconButton,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
+
 import { useDispatch, useSelector } from "react-redux";
 import { likeDeal } from "../../../features/api/dealSlice";
 

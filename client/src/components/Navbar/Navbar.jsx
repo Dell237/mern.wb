@@ -18,6 +18,7 @@ import {
   Divider,
   ListItemIcon,
 } from "@mui/material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import MenuIcon from "@mui/icons-material/Menu";
 import AdbIcon from "@mui/icons-material/Adb";
 import HolidayVillageIcon from "@mui/icons-material/HolidayVillage";
@@ -77,6 +78,7 @@ const Navbar = () => {
     }
   };
   const handleKeyPress = (e) => {
+    e.preventDefault();
     if (search === "" && e.key === 46) {
       navigate(`search?searchQuery=${"none"}`);
     }
@@ -212,6 +214,9 @@ const Navbar = () => {
               )}
               {user && (
                 <Box sx={{ flexGrow: 0 }}>
+                  <IconButton onClick={() => navigate("/Favorite")}>
+                    <FavoriteIcon />
+                  </IconButton>
                   <Tooltip title="Open settings">
                     <IconButton
                       onClick={handleClick}

@@ -40,7 +40,7 @@ const Deals = () => {
   }, [Like, userId, dispatch]);
 
   const defaultTheme = createTheme();
-  return !dealItem.length ? (
+  return !dealItem ? (
     <CircularProgress />
   ) : (
     <ThemeProvider theme={defaultTheme}>
@@ -57,7 +57,7 @@ const Deals = () => {
 
       <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
         <Typography variant="h6" align="center" gutterBottom>
-          Footer
+          Deals
         </Typography>
         <Typography
           variant="subtitle1"
@@ -65,13 +65,13 @@ const Deals = () => {
           color="text.secondary"
           component="p"
         >
-          Something here to give the footer a purpose!
+          Angebote, Deals, Gutscheine
         </Typography>
         <Typography variant="body2" color="text.secondary" align="center">
           {"Copyright © "}
-          <Link color="inherit" href="https://mui.com/">
-            Your Website
-          </Link>{" "}
+          <Link color="inherit" href="localhost:5000/">
+            Deals
+          </Link>
           {new Date().getFullYear()}
           {"."}
         </Typography>

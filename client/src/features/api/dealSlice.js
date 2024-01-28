@@ -73,6 +73,22 @@ export const getPostsBySearch = createAsyncThunk(
     }
   }
 );
+export const disLikeDeals = createAsyncThunk(
+  "deal/dislike",
+  async ({ userId, dealId }) => {
+    await userLogged();
+
+    try {
+      const { data } = await axios.delete(
+        `${url}/all/disliked/${userId}/${dealId}`
+      );
+
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue("Fehler");
+    }
+  }
+);
 
 const initialState = {
   dealItem: [],
@@ -97,9 +113,9 @@ export const dealSlice = createSlice({
       .addCase(getDeals.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getDeals.fulfilled, (state, action) => {
+      .addCase(getDeals.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-        state.dealItem = action.payload;
+        state.dealItem = payload;
       })
       .addCase(getDeals.rejected, (state, action) => {
         state.isLoading = false;
@@ -142,6 +158,17 @@ export const dealSlice = createSlice({
       })
 
       .addCase(getPostsBySearch.rejected, (state, action) => {
+        state.isLoading = false;
+      })
+      .addCase(disLikeDeals.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(disLikeDeals.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.dealItem = payload.data;
+      })
+
+      .addCase(disLikeDeals.rejected, (state, action) => {
         state.isLoading = false;
       });
   },
