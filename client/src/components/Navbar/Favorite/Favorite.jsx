@@ -50,7 +50,7 @@ const Favorite = () => {
   return (
     <div style={{ width: "100%", marginTop: "25px" }}>
       <Typography sx={{ m: 2, fontSize: "1rem" }}>All</Typography>
-      {!likedPosts ? (
+      {!likedPosts.length ? (
         <CircularProgress />
       ) : (
         likedPosts.map((deal) => (
@@ -86,6 +86,7 @@ const Favorite = () => {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
+                  width: "100%",
                 }}
               >
                 <CardContent sx={{ width: "100%" }}>
@@ -100,9 +101,34 @@ const Favorite = () => {
                     {deal.message}
                   </Typography>
                 </CardContent>
-                <CardActions sx={{ alignSelf: "flex-start" }}>
-                  <Button onClick={(e) => handleDisLike(e, deal._id)}>
+                <CardActions
+                  sx={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <Button
+                    sx={{
+                      color: "rgb(73, 190, 37, 1)",
+                      "&:hover": {
+                        color: "rgb(68, 227, 19, 1)",
+                      },
+                    }}
+                    onClick={(e) => handleDisLike(e, deal._id)}
+                  >
                     <FavoriteIcon />
+                  </Button>
+                  <Button
+                    sx={{
+                      bgcolor: "rgb(73, 190, 37, 1)",
+                      color: "white",
+                      pr: 7,
+                      pl: 7,
+                      borderRadius: 2.5,
+                      "&:hover": {
+                        bgcolor: "rgb(68, 227, 19, 1)",
+                      },
+                    }}
+                    onClick={() => openInNewTab(deal.link)}
+                  >
+                    Zum Deal
                   </Button>
                 </CardActions>
               </Box>

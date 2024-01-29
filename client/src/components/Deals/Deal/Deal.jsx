@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardMedia,
@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
-
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { useDispatch, useSelector } from "react-redux";
 import { likeDeal } from "../../../features/api/dealSlice";
 
@@ -58,15 +58,31 @@ const Deal = ({ deal, likedPosts, setLike }) => {
       <CardActions className="flex justify-between">
         <IconButton
           aria-label="add to favorites"
-          disabled={likedPosts.some((LikedPost) => LikedPost._id === deal._id)}
+          disabled={likedPosts.some((LikedPost) =>
+            LikedPost._id === deal._id ? true : false
+          )}
           onClick={(e) => {
             handleLike(e, deal._id, userId);
           }}
         >
-          <FavoriteIcon fontSize="small" /> &nbsp; {deal.likeCount}
+          <FavoriteIcon fontSize="small" />
+          &nbsp; {deal.likeCount}
         </IconButton>
-        <Button color="success" onClick={() => openInNewTab(deal.link)}>
-          Zum Deal
+        <Button
+          sx={{
+            bgcolor: "rgb(73, 190, 37, 1)",
+            color: "white",
+            position: "relative",
+            pr: 7,
+            pl: 7,
+            borderRadius: 2.5,
+            "&:hover": {
+              bgcolor: "rgb(69, 200, 25, 1)",
+            },
+          }}
+          onClick={() => openInNewTab(deal.link)}
+        >
+          Zum Deal <OpenInNewIcon />
         </Button>
       </CardActions>
     </Card>

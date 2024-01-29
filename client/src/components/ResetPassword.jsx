@@ -14,15 +14,19 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { resetPassword } from "../features/api/apiSlice";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const ResetPassword = () => {
   const [errMsg, setErrMsg] = useState("");
   const [Password, setPassword] = useState("");
   const defaultTheme = createTheme();
   const dispatch = useDispatch();
-  const { id, token } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const tokenInQuery = new URLSearchParams(location.search); // get token from url query
+  const token = tokenInQuery.get("token");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 

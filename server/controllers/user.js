@@ -181,12 +181,26 @@ const forgotPassword = async (req, res) => {
       pass: "hgkk hzdp zyrp jmyb ",
     },
   });
-  const link = `http://localhost:5173/forgot-password/${user._id}/${token}`;
+  const link = `http://localhost:5173/forgot-password/${user._id}?token=${token}`;
   const mailOptions = {
     from: "jo1ker36@gmail.com",
     to: "delyarahmad237@gmail.com",
     subject: "Reset Password Link",
-    text: `To reset your password, click the following ${link}`,
+    text: `
+    Hello,
+
+    Somebody just used this email address to sign up at Deals.
+    
+    If this was you, verify your email by clicking on the link below:
+    ${link}
+    If this was not you, any other Deals accounts you may own, and your internet properties are not at risk.
+
+    You can remove this account by clicking on the link below.
+
+    http://localhost:5173/unintended-registration
+
+
+    Thanks, The Deals Team`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -199,7 +213,8 @@ const forgotPassword = async (req, res) => {
 };
 const ResetPassword = async (req, res) => {
   const { Password } = req.body;
-  const { id: _id, token } = req.params;
+  const { id: _id } = req.params;
+  const { token } = req.query;
 
   const user = await User.findById({ _id });
   if (!user) {
@@ -256,6 +271,19 @@ const logout = async (req, res) => {
     .json({ message: "You've been logged out!" });
 };
 
+const unintendedRegistration = async (req, res) => {
+  const { userId: _id, email } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(_id))
+    return res
+      .status(StatusCodes.BAD_GATEWAY)
+      .send(`Kein Benutzer with that id ${_id}`);
+
+  await User.findByIdAndDelete({ _id, email }, { new: true });
+
+  res.status(StatusCodes.OK).json("Your account has been queued for deletion.");
+};
+
 module.exports = {
   register,
   login,
@@ -265,4 +293,5 @@ module.exports = {
   ResetPassword,
   forgotPassword,
   logout,
+  unintendedRegistration,
 };

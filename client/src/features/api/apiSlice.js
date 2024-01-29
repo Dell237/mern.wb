@@ -119,9 +119,12 @@ export const resetPassword = createAsyncThunk(
   async ({ id, token, Password }, thunkAPI) => {
     try {
       console.log({ id, token, Password });
-      const resp = await axios.post(`${url}/forgot-password/${id}/${token}`, {
-        Password,
-      });
+      const resp = await axios.post(
+        `${url}/forgot-password/${id}?token=${token}`,
+        {
+          Password,
+        }
+      );
       return resp.data;
     } catch (error) {
       return thunkAPI.rejectWithValue("something went wrong!!");

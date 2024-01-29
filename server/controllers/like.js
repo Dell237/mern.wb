@@ -42,7 +42,32 @@ const getLikedDeals = async (req, res) => {
   const likedPosts = userLikes.map((like) => like.dealId);
   res.status(StatusCodes.OK).json(likedPosts);
 };
+
+const disLikeDeals = async (req, res) => {
+  const { userId, dealId } = req.params;
+
+  if (!dealId || !userId) {
+    throw new BadRequestError("no DealId or userId");
+  }
+  if (!mongoose.Types.ObjectId.isValid(userId))
+    return res.status(404).send(`No User: ${userId}`);
+  if (!mongoose.Types.ObjectId.isValid(dealId))
+    return res.status(404).send(`No User: ${dealId}`);
+
+  const existingLike = await Like.findOne({ userId, dealId });
+
+  if (!existingLike) return res.status(StatusCodes.NOT_FOUND).send("Not found");
+
+  await Like.findOneAndDelete({
+    userId,
+    dealId,
+  });
+
+  res.status(StatusCodes.OK).json({ message: "dislike" });
+};
+
 module.exports = {
   likeDeal,
   getLikedDeals,
+  disLikeDeals,
 };
