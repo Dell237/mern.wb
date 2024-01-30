@@ -7,10 +7,61 @@ const jwt = require("jsonwebtoken");
 
 const register = async (req, res) => {
   const user = await User.create({ ...req.body });
-  const token = await user.createJWT();
-  res
-    .status(StatusCodes.CREATED)
-    .json({ user: { username: user.username }, token });
+  const { email } = req.body;
+  const token = await user.createSignUpToken();
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.NODEMAILER_USER,
+      pass: process.env.PASS,
+    },
+  });
+  const link = `http://localhost:5173/signup/${user._id}?token=${token}`;
+  const mailOptions = {
+    from: process.env.NODEMAILER_USER,
+    to: process.env.NODEMAILER_TO,
+    subject: "Please verify your email address",
+    text: `
+    Hello,
+
+    Somebody just used this email address to sign up at Deals.
+    
+    If this was you, verify your email by clicking on the link below:
+    ${link}
+    If this was not you, any other Deals accounts you may own, and your internet properties are not at risk.
+
+    You can remove this account by clicking on the link below.
+
+    http://localhost:5173/unintended-registration/${user._id}/${email}
+
+
+    Thanks, The Deals Team`,
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      return res.status(StatusCodes.OK).send();
+    }
+  });
+};
+
+const checkSignUp = async (req, res) => {
+  const { userId: _id } = req.params;
+  const { token: signupToken } = req.query;
+  const user = await User.findById(_id);
+  if (!user) {
+    throw new UnauthenticatedError("invalid credentials");
+  }
+  const check = await jwt.verify(signupToken, process.env.JWT_SECRET);
+  if (!check) {
+    throw new BadRequestError("No verify!!");
+  }
+
+  signupToken === (await null);
+
+  res.status(StatusCodes.OK).send("verify completed");
 };
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -177,28 +228,24 @@ const forgotPassword = async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "jo1ker36@gmail.com",
-      pass: "hgkk hzdp zyrp jmyb ",
+      user: process.env.NODEMAILER_USER,
+      pass: process.env.NODEMAILER_PASS,
     },
   });
   const link = `http://localhost:5173/forgot-password/${user._id}?token=${token}`;
   const mailOptions = {
-    from: "jo1ker36@gmail.com",
-    to: "delyarahmad237@gmail.com",
-    subject: "Reset Password Link",
+    from: process.env.NODEMAILER_USER,
+    to: process.env.NODEMAILER_TO,
+    subject: "Password reset request",
     text: `
     Hello,
 
-    Somebody just used this email address to sign up at Deals.
-    
-    If this was you, verify your email by clicking on the link below:
+    Someone just requested to change your Deals account's password. If this was you, click on the link below to reset it.
     ${link}
-    If this was not you, any other Deals accounts you may own, and your internet properties are not at risk.
 
-    You can remove this account by clicking on the link below.
+    This link will expire within 1 hours.
 
-    http://localhost:5173/unintended-registration
-
+    If you don't want to reset your credentials, just ignore this message and nothing will be changed.
 
     Thanks, The Deals Team`,
   };
@@ -213,7 +260,7 @@ const forgotPassword = async (req, res) => {
 };
 const ResetPassword = async (req, res) => {
   const { Password } = req.body;
-  const { id: _id } = req.params;
+  const { userId: _id } = req.params;
   const { token } = req.query;
 
   const user = await User.findById({ _id });
@@ -234,21 +281,25 @@ const ResetPassword = async (req, res) => {
     },
     { new: true }
   );
-  token === null;
 
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "jo1ker36@gmail.com",
-      pass: "hgkk hzdp zyrp jmyb ",
+      user: process.env.NODEMAILER_USER,
+      pass: process.env.NODEMAILER_PASS,
     },
   });
 
   var mailOptions = {
-    from: "jo1ker36@gmail.com",
-    to: "delyarahmad237@gmail.com",
-    subject: "Reset Password Link",
-    text: `Reset Password OK`,
+    from: process.env.NODEMAILER_USER,
+    to: process.env.NODEMAILER_TO,
+    subject: "Your Deals password has been changed",
+    text: `
+    This is a confirmation that the password for your Deals account ${user.username} has just been changed.
+
+    If you didn't change your password, you can secure your account here.
+
+    If you're having trouble, please refer to the Instagram Help Center.`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -277,7 +328,7 @@ const unintendedRegistration = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(_id))
     return res
       .status(StatusCodes.BAD_GATEWAY)
-      .send(`Kein Benutzer with that id ${_id}`);
+      .send(`no user with that id ${_id}`);
 
   await User.findByIdAndDelete({ _id, email }, { new: true });
 
@@ -286,6 +337,7 @@ const unintendedRegistration = async (req, res) => {
 
 module.exports = {
   register,
+  checkSignUp,
   login,
   updatePassword,
   updateUsername,

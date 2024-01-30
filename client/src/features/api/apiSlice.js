@@ -2,6 +2,15 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const url = "http://localhost:5000/api/v1/auth";
+export const userLogged = () => {
+  let authToken = localStorage.getItem("jwt");
+  if (authToken === null) {
+    axios.defaults.headers.common.Authorization = null;
+  } else {
+    axios.defaults.headers.common.Authorization = `Bearer ${authToken}`;
+  }
+};
+
 export const regUser = createAsyncThunk(
   "user/register",
   async ({ username, email, password }, thunkAPI) => {
@@ -17,14 +26,7 @@ export const regUser = createAsyncThunk(
     }
   }
 );
-export const userLogged = () => {
-  let authToken = localStorage.getItem("jwt");
-  if (authToken === null) {
-    axios.defaults.headers.common.Authorization = null;
-  } else {
-    axios.defaults.headers.common.Authorization = `Bearer ${authToken}`;
-  }
-};
+
 export const loginUser = createAsyncThunk(
   "user/login",
   async ({ email, password }, thunkAPI) => {
@@ -128,6 +130,22 @@ export const resetPassword = createAsyncThunk(
       return resp.data;
     } catch (error) {
       return thunkAPI.rejectWithValue("something went wrong!!");
+    }
+  }
+);
+export const checkSignUp = createAsyncThunk(
+  "user/checkSignUp",
+  async ({ id: userId, token }, thunkAPI) => {
+    try {
+      console.log({ userId, token });
+      const { data } = await axios.post(
+        `${url}/signup/${userId}?token=${token}`
+      );
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        "something went wrong, Please check your email and password!"
+      );
     }
   }
 );
@@ -248,6 +266,19 @@ export const apiSlice = createSlice({
       .addCase(resetPassword.rejected, (state, action) => {
         state.isLoading = false;
         state.status = " Password ändern, Fehler geschlagen!!";
+      })
+      .addCase(checkSignUp.pending, (state) => {
+        state.isLoading = true;
+        state.status = "";
+      })
+      .addCase(checkSignUp.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.status = payload;
+        console.log(payload);
+      })
+      .addCase(checkSignUp.rejected, (state, action) => {
+        state.isLoading = false;
+        state.status = " check Email, Fehler geschlagen!!";
       });
   },
 });

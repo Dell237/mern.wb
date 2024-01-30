@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { regUser } from "../features/api/apiSlice";
+import { regUser } from "../../features/api/apiSlice";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({

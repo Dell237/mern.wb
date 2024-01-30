@@ -12,6 +12,7 @@ import {
   ForgotPassword,
   ResetPassword,
   Favorite,
+  CheckSignUp,
 } from "./components/index";
 
 const App = () => {
@@ -23,6 +24,8 @@ const App = () => {
         <Route path="/search" element={<Deals />} />
         <Route path="/Sign-In" element={<SignIn />} />
         <Route path="/Sign-Up" element={<SignUp />} />
+
+        <Route path="/SignUp/:id" element={<CheckSignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/forgot-password/:id" element={<ResetPassword />} />
         <Route element={<PrivatRoute />}>

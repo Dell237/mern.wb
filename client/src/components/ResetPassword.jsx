@@ -31,7 +31,6 @@ const ResetPassword = () => {
     e.preventDefault();
 
     try {
-      console.log({ id, token, Password });
       const data = await dispatch(
         resetPassword({ id, token, Password })
       ).unwrap();

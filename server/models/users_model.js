@@ -48,12 +48,10 @@ userSchema.methods.createJWT = async function () {
   );
   return token;
 };
-userSchema.methods.createAccessToken = async function () {
-  const token = await jwt.sign(
-    { userId: this._id, username: this.username },
-    process.env.JWT_SECRET,
-    { expiresIn: "15s" }
-  );
+userSchema.methods.createSignUpToken = async function () {
+  const token = await jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
+    expiresIn: "1d",
+  });
   return token;
 };
 
