@@ -1,25 +1,22 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-
-const url = "http://localhost:5000/api/v1/auth";
-export const userLogged = () => {
-  let authToken = localStorage.getItem("jwt");
-  if (authToken === null) {
-    axios.defaults.headers.common.Authorization = null;
-  } else {
-    axios.defaults.headers.common.Authorization = `Bearer ${authToken}`;
-  }
-};
+import axios from "../../api/axios";
 
 export const regUser = createAsyncThunk(
   "user/register",
   async ({ username, email, password }, thunkAPI) => {
     try {
-      const resp = await axios.post(`${url}/register`, {
-        username,
-        email,
-        password,
-      });
+      const resp = await axios.post(
+        `/register`,
+        JSON.stringify({
+          username,
+          email,
+          password,
+        }),
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
       return resp.data;
     } catch (error) {
       return thunkAPI.rejectWithValue("something went wrong");
@@ -31,10 +28,12 @@ export const loginUser = createAsyncThunk(
   "user/login",
   async ({ email, password }, thunkAPI) => {
     try {
-      await userLogged();
-      const resp = await axios.post(`${url}/login`, { email, password });
-      localStorage.setItem("jwt", resp.data.token);
-
+      const resp = await axios.post(
+        `/auth/login`,
+        { email, password },
+        { withCredentials: true }
+      );
+      localStorage.setItem("jwt", resp.data.accessToken);
       return resp.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -46,9 +45,9 @@ export const loginUser = createAsyncThunk(
 
 export const logOut = createAsyncThunk("user/logOut", async () => {
   try {
-    const resp = await axios.post(`${url}/logout`);
+    await axios.post(`/auth/logout`);
     localStorage.removeItem("jwt");
-    return resp.data;
+    return;
   } catch (error) {
     return thunkAPI.rejectWithValue(
       "something went wrong, you are not logged!"
@@ -60,9 +59,7 @@ export const ChangePassword = createAsyncThunk(
   "user/changePassword",
   async ({ userId, oldPassword, newPassword, username }, thunkAPI) => {
     try {
-      await userLogged();
-
-      const resp = await axios.post(`${url}/${userId}/updatePassword`, {
+      const resp = await axios.post(`$/auth/${userId}/updatePassword`, {
         oldPassword,
         newPassword,
         username,
@@ -77,9 +74,7 @@ export const updateUsername = createAsyncThunk(
   "user/updateUsername",
   async ({ userId, username }, thunkAPI) => {
     try {
-      await userLogged();
-
-      const resp = await axios.post(`${url}/${userId}/updateUsername`, {
+      const resp = await axios.post(`/auth/${userId}/updateUsername`, {
         username,
       });
       return resp.data;
@@ -92,9 +87,7 @@ export const updateProfileBild = createAsyncThunk(
   "user/updateProfileBild",
   async ({ userId, profileBild }, thunkAPI) => {
     try {
-      await userLogged();
-
-      const resp = await axios.post(`${url}/${userId}/updateProfileBild`, {
+      const resp = await axios.post(`/auth/${userId}/updateProfileBild`, {
         profileBild,
       });
       return resp.data;
@@ -107,7 +100,7 @@ export const forgotPassword = createAsyncThunk(
   "user/Forgot-Password",
   async ({ email }, thunkAPI) => {
     try {
-      const resp = await axios.post(`${url}/forgot-password`, {
+      const resp = await axios.post(`/auth/forgot-password`, {
         email,
       });
       return resp.data;
@@ -122,7 +115,7 @@ export const resetPassword = createAsyncThunk(
     try {
       console.log({ id, token, Password });
       const resp = await axios.post(
-        `${url}/forgot-password/${id}?token=${token}`,
+        `/auth/forgot-password/${id}?token=${token}`,
         {
           Password,
         }
@@ -139,7 +132,7 @@ export const checkSignUp = createAsyncThunk(
     try {
       console.log({ userId, token });
       const { data } = await axios.post(
-        `${url}/signup/${userId}?token=${token}`
+        `/auth/signup/${userId}?token=${token}`
       );
       return data;
     } catch (error) {
@@ -152,6 +145,7 @@ export const checkSignUp = createAsyncThunk(
 
 const initialState = {
   user: null,
+  accessToken: null,
   isLoading: false,
   userId: null,
   status: "",
@@ -160,9 +154,15 @@ export const apiSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    registerUser: (state, action) => {
-      console.log(action);
-      state.user = action.payload;
+    setCredentials: (state, action) => {
+      const { user, accessToken } = action.payload;
+      state.user = user;
+      state.accessToken = accessToken;
+      state.userId = user.userId;
+    },
+    log_Out: (state, action) => {
+      state.user = null;
+      state.token = null;
     },
   },
   extraReducers: (builder) => {
@@ -181,10 +181,11 @@ export const apiSlice = createSlice({
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(loginUser.fulfilled, (state, action) => {
+      .addCase(loginUser.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-        state.user = action.payload.user;
-        state.userId = action.payload.user.userId;
+        state.user = payload.user;
+        state.accessToken = payload.accessToken;
+        state.userId = payload.user.userId;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -282,5 +283,5 @@ export const apiSlice = createSlice({
       });
   },
 });
-export const { registerUser } = apiSlice.actions;
+export const { setCredentials, log_Out } = apiSlice.actions;
 export default apiSlice.reducer;

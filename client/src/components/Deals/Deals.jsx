@@ -26,12 +26,13 @@ const Deals = () => {
   useEffect(() => {
     const checkIfLiked = async () => {
       try {
-        if (userId !== null && localStorage.getItem("jwt")) {
+        if (userId !== null) {
           const response = await dispatch(getLikedDeals({ userId })).unwrap();
+
           return await setLikedPosts(response);
         }
       } catch (error) {
-        return console.error("Fehler beim Überprüfen des Likes:", error);
+        console.error("Fehler beim Überprüfen des Likes:", error);
       }
     };
 
@@ -45,10 +46,10 @@ const Deals = () => {
   ) : (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-      <Container sx={{ py: 8 }} maxWidth="md">
+      <Container sx={{ pt: 7 }} maxWidth="xl">
         <Grid container spacing={4}>
           {dealItem.map((deal) => (
-            <Grid item key={deal._id} xs={12} sm={6} md={4}>
+            <Grid item key={deal._id} xs={12} sm={6} md={4} xl={2}>
               <Deal deal={deal} setLike={setLike} likedPosts={likedPosts} />
             </Grid>
           ))}

@@ -1,4 +1,4 @@
-const { default: mongoose, now } = require("mongoose");
+const { mongoose } = require("mongoose");
 const { BadRequestError, UnauthenticatedError } = require("../errors");
 const User = require("../models/users_model");
 const { StatusCodes } = require("http-status-codes");
@@ -13,7 +13,7 @@ const register = async (req, res) => {
     service: "gmail",
     auth: {
       user: process.env.NODEMAILER_USER,
-      pass: process.env.PASS,
+      pass: process.env.NODEMAILER_PASS,
     },
   });
   const link = `http://localhost:5173/signup/${user._id}?token=${token}`;
@@ -42,7 +42,7 @@ const register = async (req, res) => {
     if (error) {
       console.log(error);
     } else {
-      return res.status(StatusCodes.OK).send();
+      return res.sendStatus(StatusCodes.OK);
     }
   });
 };
@@ -54,14 +54,12 @@ const checkSignUp = async (req, res) => {
   if (!user) {
     throw new UnauthenticatedError("invalid credentials");
   }
-  const check = await jwt.verify(signupToken, process.env.JWT_SECRET);
+  const check = await jwt.verify(signupToken, process.env.JWT_SIGNUP_TOKEN);
   if (!check) {
     throw new BadRequestError("No verify!!");
   }
 
-  signupToken === (await null);
-
-  res.status(StatusCodes.OK).send("verify completed");
+  res.status(StatusCodes.OK).send({ success: `New user ${user} created!` });
 };
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -74,14 +72,26 @@ const login = async (req, res) => {
   }
   const passwordCheck = await user.comparePassword(password);
   if (!passwordCheck) {
-    throw new UnauthenticatedError("Password Falsch!");
+    throw new UnauthenticatedError("Password Falsch!!!");
   }
-  // const access_token = await user.createAccessToken();
-  const token = await user.createJWT();
-  // res.status(StatusCodes.OK).json({ user: { username: user.username }, token });
-  res.cookie("jwt", token, {
+  const accessToken = await user.createAccessToken();
+  const refreshToken = await user.createRefreshToken();
+
+  // Saving refreshToken with current user
+  const result = await User.findByIdAndUpdate(
+    user._id,
+    {
+      $set: {
+        refreshToken: refreshToken,
+      },
+    },
+    { new: true }
+  );
+  console.log(result);
+  res.cookie("jwt", refreshToken, {
     httpOnly: true,
-    // secure: true,
+    sameSite: "None",
+    secure: true,
 
     maxAge: 24 * 60 * 60 * 1000,
   });
@@ -92,7 +102,7 @@ const login = async (req, res) => {
       userId: user._id,
       profileBild: user.profileBild,
     },
-    token,
+    accessToken,
   });
 };
 
@@ -267,7 +277,7 @@ const ResetPassword = async (req, res) => {
   if (!user) {
     throw new UnauthenticatedError("invalid credentials");
   }
-  const check = await jwt.verify(token, process.env.JWT_SECRET);
+  const check = await jwt.verify(token, process.env.JWT_FORGOT_TOKEN);
   if (!check) {
     throw new BadRequestError("No verify!!");
   }
@@ -311,15 +321,35 @@ const ResetPassword = async (req, res) => {
   });
 };
 const logout = async (req, res) => {
-  res
-    .cookie("access_token", "", {
-      httpOnly: true,
-      // secure: true,
-      sameSite: "None",
-      maxAge: 0,
-    })
-    .status(StatusCodes.OK)
-    .json({ message: "You've been logged out!" });
+  // On client, also delete the accessToken
+
+  const cookies = req.cookies;
+  if (!cookies?.jwt) return res.sendStatus(204);
+
+  const refreshToken = cookies.jwt;
+  console.log(refreshToken);
+
+  // Is refreshToken in db?
+  const foundUser = await User.findOne({ refreshToken }).exec();
+  if (!foundUser) {
+    res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+    return res.sendStatus(204);
+  }
+
+  // Delete refreshToken in db
+  const result = await User.findByIdAndUpdate(
+    foundUser._id,
+    {
+      $set: {
+        refreshToken: "",
+      },
+    },
+    { new: true }
+  );
+  console.log(result);
+
+  res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+  res.sendStatus(204);
 };
 
 const unintendedRegistration = async (req, res) => {

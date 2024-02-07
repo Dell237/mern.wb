@@ -16,37 +16,46 @@ import {
 } from "../../../features/api/dealSlice";
 import { useDispatch, useSelector } from "react-redux";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import { useNavigate, useLocation } from "react-router-dom";
+import { logOut } from "../../../features/api/apiSlice";
+
 const Favorite = () => {
   const { userId } = useSelector((state) => state.user);
 
   const [likedPosts, setLikedPosts] = useState([]);
-  const [Like, setLike] = useState();
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
+  const location = useLocation();
+  const openInNewTab = (url) => {
+    window.open(url, "_blank", "noreferrer");
+  };
   const handleDisLike = async (e, dealId) => {
     e.preventDefault();
     try {
       await dispatch(disLikeDeals({ userId, dealId }));
       return await checkIfLiked();
     } catch (error) {
+      await dispatch(logOut());
       return console.error("Fehler beim Überprüfen des Likes:", error);
     }
   };
   const checkIfLiked = async () => {
     try {
-      if (userId !== null && localStorage.getItem("jwt")) {
+      if (userId !== null) {
         const response = await dispatch(getLikedDeals({ userId })).unwrap();
         return await setLikedPosts(response);
       }
     } catch (error) {
-      return console.error("Fehler beim Überprüfen des Likes:", error);
+      await dispatch(logOut());
+      console.error("Fehler beim Überprüfen des Likes:", error);
+      return navigate("/Sign-In", { state: { from: location }, replace: true });
     }
   };
 
   useEffect(() => {
     dispatch(getDeals());
     checkIfLiked();
-  }, [Like, userId]);
+  }, [userId]);
   return (
     <div style={{ width: "100%", marginTop: "25px" }}>
       <Typography sx={{ m: 2, fontSize: "1rem" }}>All</Typography>
@@ -94,9 +103,11 @@ const Favorite = () => {
                     {deal.headline}
                   </Typography>
                   <Typography
-                    variant="subtitle1"
-                    color="text.secondary"
-                    component="div"
+                    style={{
+                      lineHeight: "1.4em",
+                      maxHeight: "4.2em",
+                      overflow: "hidden",
+                    }}
                   >
                     {deal.message}
                   </Typography>

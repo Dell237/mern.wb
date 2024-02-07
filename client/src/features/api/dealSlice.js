@@ -1,16 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-import { userLogged } from "./apiSlice";
+import axios, { apiPrivat } from "../../api/axios";
 
-const url = "http://localhost:5000/api/v1";
-// axios.defaults.withCredentials = true;
 export const createDeal = createAsyncThunk(
   "deals/create",
 
   async ({ headline, preis, link, message, selectedFile }, thunkAPI) => {
     try {
-      await userLogged();
-      const resp = await axios.post(`${url}/all`, {
+      const resp = await apiPrivat.post(`/all`, {
         headline,
         preis,
         link,
@@ -27,7 +23,7 @@ export const createDeal = createAsyncThunk(
 
 export const getDeals = createAsyncThunk("deals/getDeals", async () => {
   try {
-    const resp = await axios.get(`${url}/getDeals`);
+    const resp = await axios.get(`/getDeals`);
     return resp.data;
   } catch (error) {
     return thunkAPI.rejectWithValue("something went wrong");
@@ -37,8 +33,7 @@ export const likeDeal = createAsyncThunk(
   "deals/Like",
   async ({ dealId, userId }, thunkAPI) => {
     try {
-      await userLogged();
-      const resp = await axios.post(`${url}/all/likeDeal`, { dealId, userId });
+      const resp = await apiPrivat.post(`/all/likeDeal`, { dealId, userId });
       return resp.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -52,8 +47,7 @@ export const getLikedDeals = createAsyncThunk(
   "deals/LikedDeals",
   async ({ userId }, thunkAPI) => {
     try {
-      await userLogged();
-      const resp = await axios.get(`${url}/all/liked-deals/${userId}`);
+      const resp = await apiPrivat.get(`/all/liked-deals/${userId}`);
       return resp.data;
     } catch (error) {
       return thunkAPI.rejectWithValue("Benutzer hat Keins Likes .");
@@ -64,8 +58,8 @@ export const getPostsBySearch = createAsyncThunk(
   "deals/search",
   async ({ searchQuery }, thunkAPI) => {
     try {
-      const { data } = await axios.get(
-        `${url}/search?searchQuery=${searchQuery}`
+      const { data } = await axiosPriv.get(
+        `/search?searchQuery=${searchQuery}`
       );
       return data;
     } catch (error) {
@@ -76,11 +70,9 @@ export const getPostsBySearch = createAsyncThunk(
 export const disLikeDeals = createAsyncThunk(
   "deal/dislike",
   async ({ userId, dealId }) => {
-    await userLogged();
-
     try {
-      const { data } = await axios.delete(
-        `${url}/all/disliked/${userId}/${dealId}`
+      const { data } = await apiPrivat.delete(
+        `/all/disliked/${userId}/${dealId}`
       );
 
       return data;

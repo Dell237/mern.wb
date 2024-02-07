@@ -10,18 +10,23 @@ const authRouter = require("./routes/users");
 const getDealsRouter = require("./routes/getDeals");
 const dealeRouter = require("./routes/deales");
 const likesRouter = require("./routes/likes");
-const auth = require("./middleware/auth");
+const refreshingRouter = require("./routes/refresh");
+const auth = require("./middleware/verifyJWT");
 // error handler
 const notFoundMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
+const credentials = require("./middleware/credentials");
+const corsOptions = require("./middleware/corsOptions");
 
-app.use(cors());
+app.use(credentials);
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(bodyParser.json({ limit: "50mb" }));
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: false }));
 app.use(express.json());
-app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/auth", refreshingRouter);
 app.use("/api/v1", getDealsRouter);
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/all", auth, dealeRouter);
 app.use("/api/v1/all", auth, likesRouter);
 

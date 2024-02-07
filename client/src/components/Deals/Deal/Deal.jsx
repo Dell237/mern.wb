@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Card,
   CardMedia,
@@ -7,6 +7,7 @@ import {
   Typography,
   Button,
   IconButton,
+  Hidden,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
@@ -39,12 +40,20 @@ const Deal = ({ deal, likedPosts, setLike }) => {
   };
 
   return (
-    <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+    <Card
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        flex: "auto 1 1",
+      }}
+    >
       <CardMedia
         component="div"
         sx={{
           // 16:9
           pt: "56.25%",
+          m: 1,
         }}
         image={deal.selectedFile}
       />
@@ -53,9 +62,17 @@ const Deal = ({ deal, likedPosts, setLike }) => {
           {deal.headline}
         </Typography>
 
-        <Typography display="inline">{deal.message}</Typography>
+        <Typography
+          style={{
+            lineHeight: "1.4em",
+            maxHeight: "4.2em",
+            overflow: "hidden",
+          }}
+        >
+          {deal.message}
+        </Typography>
       </CardContent>
-      <CardActions className="flex justify-between">
+      <CardActions className="flex justify-between ">
         <IconButton
           aria-label="add to favorites"
           disabled={likedPosts.some((LikedPost) =>

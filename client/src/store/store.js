@@ -1,6 +1,7 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import userReducer from "./features/api/apiSlice";
-import dealReducer from "./features/api/dealSlice";
+import { combineReducers } from "@reduxjs/toolkit";
+import userReducer from "../features/api/apiSlice";
+import dealReducer from "../features/api/dealSlice";
+import { configureStore } from "@reduxjs/toolkit";
 import {
   persistStore,
   persistReducer,
@@ -13,7 +14,10 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-const rootReducer = combineReducers({ user: userReducer, deal: dealReducer });
+export const rootReducer = combineReducers({
+  user: userReducer,
+  deal: dealReducer,
+});
 
 const persistConfig = {
   key: "root",
@@ -31,6 +35,7 @@ export const store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
+  devTools: true,
 });
 
 export const persistor = persistStore(store);

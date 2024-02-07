@@ -26,6 +26,8 @@ const userSchema = new mongoose.Schema(
       default:
         "https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg",
     },
+    signupToken: String,
+    refreshToken: String,
   },
   { timestamps: true }
 );
@@ -39,30 +41,41 @@ userSchema.methods.hashPS = async function (newPassword) {
   const hashPassword = await bcrypt.genSalt(10);
   return (newPassword = await bcrypt.hash(newPassword, hashPassword));
 };
-
-userSchema.methods.createJWT = async function () {
-  const token = await jwt.sign(
-    { userId: this._id, username: this.username },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_LIFETIME }
-  );
-  return token;
-};
-userSchema.methods.createSignUpToken = async function () {
-  const token = await jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
-    expiresIn: "1d",
-  });
-  return token;
-};
-
 userSchema.methods.comparePassword = async function (ps) {
   const check = await bcrypt.compare(ps, this.password);
   return check;
 };
 
+userSchema.methods.createAccessToken = async function () {
+  const token = await jwt.sign(
+    { userId: this._id, username: this.username },
+    process.env.JWT_ACCESS_SECRET,
+    { expiresIn: process.env.JWT_ACCESS_LIFETIME }
+  );
+  return token;
+};
+userSchema.methods.createRefreshToken = async function () {
+  const token = await jwt.sign(
+    { userId: this._id, username: this.username },
+    process.env.JWT_REFRESH_TOKEN,
+    { expiresIn: process.env.JWT_REFRESH_LIFETIME }
+  );
+  return token;
+};
+userSchema.methods.createSignUpToken = async function () {
+  const token = await jwt.sign(
+    { username: this.username },
+    process.env.JWT_SIGNUP_TOKEN,
+    {
+      expiresIn: process.env.JWT_SIGNUP_LIFETIME,
+    }
+  );
+  return token;
+};
+
 userSchema.methods.createForgotPasswordToken = async function (email) {
-  const token = await jwt.sign({ email }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+  const token = await jwt.sign({ email }, process.env.JWT_FORGOT_TOKEN, {
+    expiresIn: process.env.JWT_FORGOT_LIFETIME,
   });
   return token;
 };

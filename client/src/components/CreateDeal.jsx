@@ -15,6 +15,7 @@ import {
   createTheme,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { logOut } from "../features/api/apiSlice";
 
 const CreateDeal = () => {
   const dispatch = useDispatch();
@@ -30,9 +31,13 @@ const CreateDeal = () => {
 
   const handelSubmit = async (e) => {
     e.preventDefault();
-    dispatch(createDeal(Data)).unwrap();
-
-    clear();
+    try {
+      await dispatch(createDeal(Data)).unwrap();
+    } catch (error) {
+      await dispatch(logOut());
+    } finally {
+      clear();
+    }
   };
   // to clear all the inputs
   const clear = () => {

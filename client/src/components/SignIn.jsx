@@ -15,7 +15,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   FormControl,
   IconButton,
@@ -40,6 +40,8 @@ const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [checked, setChecked] = useState(false);
   const [isValid, setIsValid] = useState(true);
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,11 +59,19 @@ const SignIn = () => {
 
     try {
       const data = await dispatch(loginUser(Data)).unwrap();
-      navigate("/");
       setData({ email: "", password: "" });
+      navigate(from, { replace: true });
       return data;
     } catch (error) {
-      return setErrMsg(error);
+      if (error?.response) {
+        setErrMsg("No Server Response");
+      } else if (error.response?.status === 400) {
+        setErrMsg("Missing Username or Password");
+      } else if (error.response?.status === 401) {
+        setErrMsg("Unauthorized");
+      } else {
+        setErrMsg("Login Failed");
+      }
     }
   };
   const validateEmail = (email) => {
