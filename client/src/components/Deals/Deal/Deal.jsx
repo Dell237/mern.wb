@@ -10,7 +10,6 @@ import {
   Hidden,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { useDispatch, useSelector } from "react-redux";
 import { likeDeal } from "../../../features/api/dealSlice";
@@ -45,15 +44,18 @@ const Deal = ({ deal, likedPosts, setLike }) => {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        flex: "auto 1 1",
+        flex: "none 1 1",
       }}
     >
       <CardMedia
-        component="div"
+        component="img"
         sx={{
-          // 16:9
-          pt: "56.25%",
-          m: 1,
+          // // 16:9
+
+          objectFit: "contain",
+          flexBasis: 200,
+          minWidth: 190,
+          minHeight: 190,
         }}
         image={deal.selectedFile}
       />
@@ -103,123 +105,6 @@ const Deal = ({ deal, likedPosts, setLike }) => {
         </Button>
       </CardActions>
     </Card>
-
-    // return (
-    //   <Paper
-    //     sx={{
-    //       p: 2,
-    //       margin: "auto",
-    //       maxWidth: 600,
-    //       flexGrow: 1,
-    //       backgroundColor: (theme) =>
-    //         theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-    //     }}
-    //   >
-    //     <Grid container spacing={2}>
-    //       <Grid item>
-    //         <CardMedia sx={{ width: 128, height: 128 }}>
-    //           <Img alt="complex" src={deal.selectedFile} />
-    //         </CardMedia>
-    //       </Grid>
-    //       <Grid item xs={12} sm container>
-    //         <Grid item xs container direction="column" spacing={2}>
-    //           <Grid item xs>
-    //             <Typography gutterBottom variant="subtitle1" component="div">
-    //               {deal.headline}
-    //             </Typography>
-    //           </Grid>
-    //           <Grid item>
-    //             <IconButton
-    //               aria-label="add to favorites"
-    //               disabled={likedPosts.some(
-    //                 (LikedPost) => LikedPost._id === deal._id
-    //               )}
-    //               onClick={(e) => {
-    //                 handleLike(e, deal._id, userId);
-    //               }}
-    //             >
-    //               <FavoriteIcon fontSize="small" /> &nbsp; {deal.likeCount}
-    //             </IconButton>
-    //           </Grid>
-    //         </Grid>
-    //         <Grid item>
-    //           <Typography
-    //             className="text-green-600 text-lg font-bold"
-    //             variant="subtitle1"
-    //             component="div"
-    //           >
-    //             {deal.preis}€
-    //           </Typography>
-    //         </Grid>
-    //       </Grid>
-    //     </Grid>
-    //   </Paper>
-    // );
-
-    //   <Card className={classes.root}>
-    //     <CardMedia
-    //       className={classes.media}
-    //       image={deal.selectedFile}
-    //       alt="Bild"
-    //       component={"div"}
-    //     />
-    //     <CardContent className={classes.cardContent}>
-    //       <Typography gutterBottom variant="h5" component="div">
-    //         {deal.headline}
-    //       </Typography>
-    //       <div className="text-green-600 text-lg font-bold">
-    //         <Typography gutterBottom variant="h5">
-    //           {deal.preis}€
-    //         </Typography>
-    //       </div>
-    //     </CardContent>
-    //     <CardActions className={classes.cardActions} disableSpacing>
-    //       <IconButton
-    //         aria-label="add to favorites"
-    //         disabled={likedPosts.some((LikedPost) => LikedPost._id === deal._id)}
-    //         onClick={(e) => {
-    //           handleLike(e, deal._id, userId);
-    //         }}
-    //       >
-    //         <FavoriteIcon fontSize="small" /> &nbsp; {deal.likeCount}
-    //       </IconButton>
-    //       <Button color="success" onClick={() => openInNewTab(deal.link)}>
-    //         Zum Deal
-    //       </Button>
-    //     </CardActions>
-    //   </Card>
-    // );
-
-    // return (
-    //   <Card className={classes.root}>
-    //     <CardMedia className={classes.media} image={deal.selectedFile} />
-    //     <CardContent>
-    //       <div className={classes.cardContent}>
-    //         <Typography variant="h5" gutterBottom>
-    //           {deal.headline}
-    //         </Typography>
-    //         <Typography variant="h5" gutterBottom>
-    //           {deal.preis}€
-    //         </Typography>
-    //       </div>
-    //       <Typography
-    //         // dangerouslySetInnerHTML={{ __html: product.description }}
-    //         variant="body2"
-    //         color="textSecondary"
-    //       />
-    //     </CardContent>
-    //     <CardActions className={classes.cardActions}>
-    //       <IconButton
-    //         aria-label="add to favorites"
-    //         disabled={likedPosts.some((LikedPost) => LikedPost._id === deal._id)}
-    //         onClick={(e) => {
-    //           handleLike(e, deal._id, userId);
-    //         }}
-    //       >
-    //         <FavoriteIcon fontSize="small" /> &nbsp; {deal.likeCount}
-    //       </IconButton>
-    //     </CardActions>
-    //   </Card>
   );
 };
 

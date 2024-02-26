@@ -11,6 +11,7 @@ import ForgotPassword from "./ForgotPassword";
 import ResetPassword from "./ResetPassword";
 import Favorite from "./Navbar/Favorite/Favorite";
 import CheckSignUp from "./SignUp/CheckSignUp";
+import UserDeal from "./UserDeal";
 export {
   Deals,
   About,
@@ -25,4 +26,5 @@ export {
   ForgotPassword,
   ResetPassword,
   Favorite,
+  UserDeal,
 };

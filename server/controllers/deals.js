@@ -27,14 +27,14 @@ const createDeal = async (req, res) => {
   res.status(StatusCodes.CREATED).json({ deal });
 };
 
-const getDeal = async (req, res) => {
+const getUserDeal = async (req, res) => {
   const {
     user: { userId },
-    params: { id: dealId },
   } = req;
-  const deal = await Deal.findOne({ _id: dealId, createdBy: userId });
+
+  const deal = await Deal.find({ createdBy: userId }).sort("createdAt");
   if (!deal) {
-    throw new NotFoundError(`Kein Deal mit id: ${dealId}`);
+    throw new NotFoundError(`Sie haben Kein Deal mit id: ${userId}`);
   }
   res.status(StatusCodes.OK).json({ deal });
 };
@@ -79,7 +79,7 @@ module.exports = {
   getPostsBySearch,
   getAllDeals,
   createDeal,
-  getDeal,
+  getUserDeal,
   deleteDeal,
   updateDeal,
 };

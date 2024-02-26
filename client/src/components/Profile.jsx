@@ -134,7 +134,7 @@ const Profile = () => {
           <button
             type={changePic ? "button" : "submit"}
             onClick={() => setChangePic((show) => !show)}
-            className="text-black border-2 border-solid pt-1 pb-1 w-1/2 font-semibold  rounded-3xl cursor-pointer"
+            className="text-black border-2 border-solid pt-1 pb-1 w-1/2 font-semibold rounded-3xl cursor-pointer"
           >
             Ersetzen
           </button>
@@ -142,13 +142,13 @@ const Profile = () => {
             <button
               type="button"
               onClick={() => setChangePic((show) => !show)}
-              className="  text-green-500  w-1/2 font-semibold pt-1 pb-1 rounded-3xl    hover:opacity-40 disabled:opacity-80"
+              className="  text-green-500  w-1/2 font-semibold pt-1 pb-1 rounded-3xl hover:opacity-40 disabled:opacity-80"
             >
               Abbrechen
             </button>
           ) : (
             <span
-              className="text-red-700  w-1/2 font-semibold pt-1 pb-1 rounded-3xl cursor-pointer"
+              className="text-red-700  w-1/2 font-semibold pt-1 pb-1 rounded-3xl cursor-pointer hover:bg-red-100"
               onClick={(e) => handleChangePic(e, userId)}
             >
               Entfernen
@@ -189,7 +189,7 @@ const Profile = () => {
                 <button
                   type="button"
                   onClick={() => setUsername((show) => !show)}
-                  className="  border-2 border-solid font-medium p-2 rounded-3xl    hover:opacity-75 disabled:opacity-80"
+                  className="border-2 border-solid font-medium p-2 rounded-3xl hover:opacity-75 disabled:opacity-80"
                 >
                   {isLoading ? "Loading..." : "Benutzername ändern"}
                 </button>
@@ -208,7 +208,7 @@ const Profile = () => {
                 <p className="flex flex-col gap-2">
                   <button
                     type="submit"
-                    className=" border-2 border-solid font-medium p-2 rounded-3xl   hover:opacity-75 disabled:opacity-80"
+                    className="border-2 border-solid font-medium p-2 rounded-3xl hover:opacity-75 disabled:opacity-80"
                   >
                     {isLoading ? "Loading..." : "Benutzername ändern"}
                   </button>
@@ -237,7 +237,7 @@ const Profile = () => {
                 <button
                   type="button"
                   onClick={() => setEmail((show) => !show)}
-                  className="  border-2 border-solid font-medium p-2 rounded-3xl    hover:opacity-75 disabled:opacity-80"
+                  className="border-2 border-solid font-medium p-2 rounded-3xl hover:opacity-75 disabled:opacity-80"
                 >
                   {isLoading ? "Loading..." : "Email ändern"}
                 </button>
@@ -347,9 +347,14 @@ const Profile = () => {
           <div className="border-solid border-t-2"></div>
         </div>
       </ul>
-      <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Account löschen</span>
-        <span className="text-red-700 cursor-pointer" onClick={handleSignOut}>
+      <div className="flex flex-row justify-between text-center">
+        <span className="text-red-700 border-2 border-solid font-medium p-2 w-1/3 rounded-3xl cursor-pointer hover:bg-red-100">
+          Account löschen
+        </span>
+        <span
+          className="text-green-500 border-2 border-solid font-medium p-2 w-1/3 rounded-3xl cursor-pointer"
+          onClick={handleSignOut}
+        >
           Sign out
         </span>
       </div>

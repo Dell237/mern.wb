@@ -19,6 +19,8 @@ import {
   ListItemIcon,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import ArchiveIcon from "@mui/icons-material/Archive";
 import MenuIcon from "@mui/icons-material/Menu";
 import AdbIcon from "@mui/icons-material/Adb";
 import HolidayVillageIcon from "@mui/icons-material/HolidayVillage";
@@ -247,6 +249,7 @@ const Navbar = () => {
                           overflow: "visible",
                           filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
                           mt: 1.5,
+
                           "& .MuiAvatar-root": {
                             width: 32,
                             height: 32,
@@ -276,7 +279,14 @@ const Navbar = () => {
                       to="/Profile"
                       onClick={handleClose}
                     >
-                      <Avatar /> Profile
+                      <AccountCircleIcon /> Profile
+                    </MenuItem>
+                    <MenuItem
+                      component={Link}
+                      to="/Profile/deals"
+                      onClick={handleClose}
+                    >
+                      <ArchiveIcon /> Mein Deals
                     </MenuItem>
                     <MenuItem
                       component={Link}
@@ -295,22 +305,6 @@ const Navbar = () => {
                       </ListItemIcon>
                       Logout
                     </MenuItem>
-                    {/* {settings.map((setting) => (
-                      <MenuItem key={setting.id} onClick={handleCloseUserMenu}>
-                        <Typography
-                          component={Link}
-                          to={setting.link}
-                          textAlign="center"
-                          onClick={(e) =>
-                            setting.titel === "abmelden"
-                              ? handleSignOut(e)
-                              : null
-                          }
-                        >
-                          {setting.titel}
-                        </Typography>
-                      </MenuItem>
-                    ))} */}
                   </Menu>
                 </Box>
               )}

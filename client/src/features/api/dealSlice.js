@@ -58,9 +58,7 @@ export const getPostsBySearch = createAsyncThunk(
   "deals/search",
   async ({ searchQuery }, thunkAPI) => {
     try {
-      const { data } = await axiosPriv.get(
-        `/search?searchQuery=${searchQuery}`
-      );
+      const { data } = await axios.get(`/search?searchQuery=${searchQuery}`);
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue("Ergebnisse: 0");
@@ -81,6 +79,14 @@ export const disLikeDeals = createAsyncThunk(
     }
   }
 );
+export const getAllUserDeal = createAsyncThunk("deal/UserDeals", async () => {
+  try {
+    const { data } = await apiPrivat.get(`/all/deals`);
+    return data;
+  } catch (error) {
+    return console.log(error);
+  }
+});
 
 const initialState = {
   dealItem: [],
@@ -129,14 +135,6 @@ export const dealSlice = createSlice({
       })
       .addCase(getLikedDeals.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-
-        // const LikedDeal = state.dealItem.find(
-        //   (item) => item._id === payload._id
-        // );
-
-        // state.dealItem.map((deal) =>
-        //   deal._id === action.payload._id ? (state.Liked = true) : deal
-        // );
       })
       .addCase(getLikedDeals.rejected, (state, action) => {
         state.isLoading = false;
@@ -161,6 +159,16 @@ export const dealSlice = createSlice({
       })
 
       .addCase(disLikeDeals.rejected, (state, action) => {
+        state.isLoading = false;
+      })
+      .addCase(getAllUserDeal.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAllUserDeal.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+      })
+
+      .addCase(getAllUserDeal.rejected, (state, action) => {
         state.isLoading = false;
       });
   },

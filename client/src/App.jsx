@@ -13,6 +13,7 @@ import {
   ResetPassword,
   Favorite,
   CheckSignUp,
+  UserDeal,
 } from "./components/index";
 
 const App = () => {
@@ -33,6 +34,7 @@ const App = () => {
           <Route path="/Profile" element={<Profile />} />
           <Route path="/About" element={<About />} />
           <Route path="/Favorite" element={<Favorite />} />
+          <Route path="/Profile/deals" element={<UserDeal />} />
         </Route>
       </Routes>
       <ScrollToTop />

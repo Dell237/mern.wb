@@ -1,12 +1,13 @@
 const {
   createDeal,
-  getDeal,
+  getUserDeal,
   deleteDeal,
   updateDeal,
 } = require("../controllers/deals");
 const router = require("express").Router();
 
 router.route("/").post(createDeal);
-router.route("/:id").get(getDeal).delete(deleteDeal).patch(updateDeal);
+router.route("/deals").get(getUserDeal);
+router.route("/:id").delete(deleteDeal).patch(updateDeal);
 
 module.exports = router;
