@@ -31,7 +31,9 @@ app.use("/api/v1/auth", userRouter);
 app.use("/api/v1/auth", auth, authUserRouter);
 app.use("/api/v1/all", auth, dealeRouter);
 app.use("/api/v1/all", auth, likesRouter);
-
+app.get("/", (req, res) => {
+  res.send("mern.wb");
+});
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
