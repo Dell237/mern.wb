@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const Deal = require("../models/Deals");
 const { NotFoundError, BadRequestError } = require("../errors");
+const { default: mongoose } = require("mongoose");
 
 const getPostsBySearch = async (req, res) => {
   const { searchQuery } = req.query;
@@ -42,16 +43,20 @@ const getUserDeal = async (req, res) => {
 const deleteDeal = async (req, res) => {
   const {
     user: { userId },
-    params: { id: dealId },
+    params: { id: _id },
   } = req;
-  const deal = await Deal.findByIdAndDelete({
-    _id: dealId,
-    createdBy: userId,
-  });
-  if (!deal) {
-    throw new NotFoundError(`Kein Deal mit id: ${dealId}`);
+  console.log(userId, _id);
+  if (!mongoose.Types.ObjectId.isValid(userId)) return res.sendStatus(404);
+  const findDeal = await Deal.findOne({ _id, createdBy: userId });
+  if (!findDeal) {
+    throw new NotFoundError(`Kein Deal mit id: ${_id} gefunden`);
   }
-  res.status(StatusCodes.OK).send();
+  if (findDeal) {
+    await Deal.findByIdAndDelete({
+      _id,
+    });
+  }
+  res.status(StatusCodes.OK).json({ _id });
 };
 
 const updateDeal = async (req, res) => {

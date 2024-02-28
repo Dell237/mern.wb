@@ -88,9 +88,24 @@ export const getAllUserDeal = createAsyncThunk("deal/UserDeals", async () => {
   }
 });
 
+export const deleteDeal = createAsyncThunk(
+  "deal/delete",
+  async ({ userId, dealId }, thunkAPI) => {
+    try {
+      const { data } = await apiPrivat.delete(`/all/${dealId}`, userId);
+      return data;
+    } catch (error) {
+      thunkAPI.rejectWithValue("No Deal found !");
+    }
+  }
+);
+
 const initialState = {
   dealItem: [],
+  userDeals: [],
+  likedDeals: [],
   isLoading: true,
+  status: "",
 };
 export const dealSlice = createSlice({
   name: "deal",
@@ -100,20 +115,21 @@ export const dealSlice = createSlice({
       .addCase(createDeal.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(createDeal.fulfilled, (state, action) => {
+      .addCase(createDeal.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-        const { payload } = action;
+        state.status = "Deal erfolgreich erstellt!";
         state.dealItem = [...state.dealItem, payload];
       })
       .addCase(createDeal.rejected, (state, action) => {
         state.isLoading = false;
+        state.status = "Deal  könnte nicht erstellt werden!";
       })
       .addCase(getDeals.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(getDeals.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-        state.dealItem = payload;
+        state.dealItem = [...payload];
       })
       .addCase(getDeals.rejected, (state, action) => {
         state.isLoading = false;
@@ -135,6 +151,7 @@ export const dealSlice = createSlice({
       })
       .addCase(getLikedDeals.fulfilled, (state, { payload }) => {
         state.isLoading = false;
+        state.likedDeals = [...payload];
       })
       .addCase(getLikedDeals.rejected, (state, action) => {
         state.isLoading = false;
@@ -166,10 +183,25 @@ export const dealSlice = createSlice({
       })
       .addCase(getAllUserDeal.fulfilled, (state, { payload }) => {
         state.isLoading = false;
+        state.userDeals = [...payload.deal];
       })
 
       .addCase(getAllUserDeal.rejected, (state, action) => {
         state.isLoading = false;
+      })
+      .addCase(deleteDeal.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteDeal.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        console.log(payload);
+        state.userDeals.filter((deal) => deal._id !== payload._id);
+
+        state.status = "Deal gelöscht!";
+      })
+      .addCase(deleteDeal.rejected, (state, action) => {
+        state.isLoading = false;
+        state.status = "Deal wurde nicht gelöscht!";
       });
   },
 });

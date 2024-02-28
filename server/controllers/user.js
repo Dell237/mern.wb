@@ -19,7 +19,7 @@ const register = async (req, res) => {
   const link = `http://localhost:5173/signup/${user._id}?token=${token}`;
   const mailOptions = {
     from: process.env.NODEMAILER_USER,
-    to: process.env.NODEMAILER_TO,
+    to: email,
     subject: "Please verify your email address",
     text: `
     Hello,
@@ -245,7 +245,7 @@ const forgotPassword = async (req, res) => {
   const link = `http://localhost:5173/forgot-password/${user._id}?token=${token}`;
   const mailOptions = {
     from: process.env.NODEMAILER_USER,
-    to: process.env.NODEMAILER_TO,
+    to: email,
     subject: "Password reset request",
     text: `
     Hello,
@@ -351,7 +351,12 @@ const logout = async (req, res) => {
   res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
   res.sendStatus(204);
 };
-
+const deleteAccount = async (req, res) => {
+  const { userId: _id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(_id)) return res.sendStatus(404);
+  await User.findByIdAndDelete(_id);
+  res.json({ message: "User deleted successfully" });
+};
 const unintendedRegistration = async (req, res) => {
   const { userId: _id, email } = req.params;
 
@@ -376,4 +381,5 @@ module.exports = {
   forgotPassword,
   logout,
   unintendedRegistration,
+  deleteAccount,
 };

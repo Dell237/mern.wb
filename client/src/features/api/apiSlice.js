@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "../../api/axios";
+import axios, { apiPrivat } from "../../api/axios";
 
 export const regUser = createAsyncThunk(
   "user/register",
   async ({ username, email, password }, thunkAPI) => {
     try {
       const resp = await axios.post(
-        `/register`,
+        `/auth/register`,
         JSON.stringify({
           username,
           email,
@@ -57,12 +57,13 @@ export const logOut = createAsyncThunk("user/logOut", async () => {
 
 export const ChangePassword = createAsyncThunk(
   "user/changePassword",
-  async ({ userId, oldPassword, newPassword, username }, thunkAPI) => {
+
+  async ({ userId, oldPassword, newPassword }, thunkAPI) => {
+    console.log({ userId, oldPassword, newPassword });
     try {
-      const resp = await axios.post(`$/auth/${userId}/updatePassword`, {
+      const resp = await apiPrivat.post(`/auth/${userId}/updatePassword`, {
         oldPassword,
         newPassword,
-        username,
       });
       return resp.data;
     } catch (error) {
@@ -74,7 +75,7 @@ export const updateUsername = createAsyncThunk(
   "user/updateUsername",
   async ({ userId, username }, thunkAPI) => {
     try {
-      const resp = await axios.post(`/auth/${userId}/updateUsername`, {
+      const resp = await apiPrivat.post(`/auth/${userId}/updateUsername`, {
         username,
       });
       return resp.data;
@@ -87,7 +88,7 @@ export const updateProfileBild = createAsyncThunk(
   "user/updateProfileBild",
   async ({ userId, profileBild }, thunkAPI) => {
     try {
-      const resp = await axios.post(`/auth/${userId}/updateProfileBild`, {
+      const resp = await apiPrivat.post(`/auth/${userId}/updateProfileBild`, {
         profileBild,
       });
       return resp.data;
@@ -139,6 +140,17 @@ export const checkSignUp = createAsyncThunk(
       return thunkAPI.rejectWithValue(
         "something went wrong, Please check your email and password!"
       );
+    }
+  }
+);
+
+export const deleteAccount = createAsyncThunk(
+  "user/deleteAccount",
+  async ({ userId }, thunkAPI) => {
+    try {
+      await apiPrivat.delete(`/auth/${userId}/delete`);
+    } catch (error) {
+      return thunkAPI.rejectWithValue("something went wrong!");
     }
   }
 );
@@ -278,6 +290,19 @@ export const apiSlice = createSlice({
         console.log(payload);
       })
       .addCase(checkSignUp.rejected, (state, action) => {
+        state.isLoading = false;
+        state.status = " check Email, Fehler geschlagen!!";
+      })
+      .addCase(deleteAccount.pending, (state) => {
+        state.isLoading = true;
+        state.status = "";
+      })
+      .addCase(deleteAccount.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.user = null;
+        state.userId = null;
+      })
+      .addCase(deleteAccount.rejected, (state, action) => {
         state.isLoading = false;
         state.status = " check Email, Fehler geschlagen!!";
       });

@@ -3,10 +3,7 @@ const {
   register,
   checkSignUp,
   login,
-  updatePassword,
   logout,
-  updateUsername,
-  updateProfileBild,
   ResetPassword,
   forgotPassword,
   unintendedRegistration,
@@ -18,9 +15,6 @@ router.route("/register").post(register);
 router.route("/signup/:userId").post(checkSignUp);
 router.route("/login").post(login);
 router.route("/logout").post(logout);
-router.route("/:userId/updatePassword").post(updatePassword);
-router.route("/:userId/updateUsername").post(updateUsername);
-router.route("/:userId/updateProfileBild").post(updateProfileBild);
 router.route("/forgot-password").post(forgotPassword);
 router.route("/forgot-password/:userId").post(ResetPassword);
 router

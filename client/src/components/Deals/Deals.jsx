@@ -41,7 +41,7 @@ const Deals = () => {
   }, [Like, userId, dispatch]);
 
   const defaultTheme = createTheme();
-  return !dealItem ? (
+  return !dealItem.length ? (
     <CircularProgress />
   ) : (
     <ThemeProvider theme={defaultTheme}>

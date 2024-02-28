@@ -1,6 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createDeal } from "../features/api/dealSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import FileBase from "react-file-base64";
 import {
   Avatar,
@@ -20,7 +20,8 @@ import { logOut } from "../features/api/apiSlice";
 const CreateDeal = () => {
   const dispatch = useDispatch();
   const dealRef = useRef();
-
+  const [statusTimer, setStatusTimer] = useState(false);
+  const { status } = useSelector((state) => state.deal);
   const [Data, setData] = useState({
     headline: "",
     preis: "",
@@ -33,6 +34,7 @@ const CreateDeal = () => {
     e.preventDefault();
     try {
       await dispatch(createDeal(Data)).unwrap();
+      setStatusTimer(true);
     } catch (error) {
       await dispatch(logOut());
     } finally {
@@ -49,6 +51,12 @@ const CreateDeal = () => {
       selectedFile: "",
     });
   };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setStatusTimer(false);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [Data]);
   const defaultTheme = createTheme();
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -76,6 +84,17 @@ const CreateDeal = () => {
           >
             <Grid container spacing={2}>
               <Grid item xs={12}>
+                {statusTimer && (
+                  <p
+                    className={
+                      status
+                        ? " text-green-400 items-center font-bold p-2 mt-2"
+                        : "absolute -left-2/4"
+                    }
+                  >
+                    {status}
+                  </p>
+                )}
                 <TextField
                   autoComplete="Überschrift"
                   name="headline"

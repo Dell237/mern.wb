@@ -9,30 +9,48 @@ import {
   Typography,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { getAllUserDeal } from "../features/api/dealSlice";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteDeal, getAllUserDeal } from "../features/api/dealSlice";
 
 const UserDeal = () => {
+  const { userId } = useSelector((state) => state.user);
+  const { userDeals, isLoading } = useSelector((state) => state.deal);
   const dispatch = useDispatch();
-  const [UserDeals, setUserDeals] = useState([]);
-
+  const handleDeleteDeal = async (e, dealId) => {
+    e.preventDefault();
+    try {
+      await dispatch(deleteDeal({ userId, dealId }));
+      await getUserDeals();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getUserDeals = async () => {
+    await dispatch(getAllUserDeal());
+  };
   useEffect(() => {
-    const getUserDeals = async () => {
-      const resp = await dispatch(getAllUserDeal()).unwrap();
-      setUserDeals(resp.deal);
-    };
     getUserDeals();
   }, []);
-
+  if (isLoading) {
+    return (
+      <div className="text-center mt-4">
+        <CircularProgress />
+      </div>
+    );
+  }
   return (
     <div style={{ width: "100%", marginTop: "25px" }}>
       <Typography sx={{ m: 2, fontSize: "2rem" }}>Mein Deals</Typography>
-      {!UserDeals.length ? (
-        <CircularProgress />
+      {!userDeals.length ? (
+        <div className="flex flex-col justify-center items-center ">
+          <Typography variant="h4">Ups!</Typography>
+          <Typography variant="h6">
+            Du hast anscheinend noch keine Beiträge gepostet!
+          </Typography>
+        </div>
       ) : (
-        UserDeals.map((deal) => (
+        userDeals.map((deal) => (
           <Card key={deal._id} sx={{ display: "flex" }}>
             <Box
               sx={{
@@ -89,21 +107,35 @@ const UserDeal = () => {
                     <FavoriteIcon />
                     &nbsp; {deal.likeCount}
                   </div>
-                  <Button
-                    sx={{
-                      bgcolor: "rgb(73, 190, 37, 1)",
-                      color: "white",
-                      pr: 7,
-                      pl: 7,
-                      borderRadius: 2.5,
-                      "&:hover": {
-                        bgcolor: "rgb(68, 227, 19, 1)",
-                      },
-                    }}
-                    onClick={() => openInNewTab(deal.link)}
-                  >
-                    Zum Deal
-                  </Button>
+                  <div className="flex gap-1">
+                    <Button
+                      onClick={(e) => handleDeleteDeal(e, deal._id)}
+                      sx={{
+                        color: "rgb(185 28 28)",
+                        font: "inherit",
+                        "&:hover": {
+                          bgcolor: "rgb(254 226 226)",
+                        },
+                      }}
+                    >
+                      Deal Löschen
+                    </Button>
+                    <Button
+                      sx={{
+                        bgcolor: "rgb(73, 190, 37, 1)",
+                        color: "white",
+                        pr: 7,
+                        pl: 7,
+                        borderRadius: 2.5,
+                        "&:hover": {
+                          bgcolor: "rgb(68, 227, 19, 1)",
+                        },
+                      }}
+                      onClick={() => openInNewTab(deal.link)}
+                    >
+                      Zum Deal
+                    </Button>
+                  </div>
                 </CardActions>
               </Box>
             </Box>

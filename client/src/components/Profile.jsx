@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ChangePassword,
+  deleteAccount,
   logOut,
   updateProfileBild,
   updateUsername,
@@ -78,11 +79,11 @@ const Profile = () => {
   };
   const handleChangePassword = async (e, userId) => {
     e.preventDefault();
-    const { username, oldPassword, newPassword } = formData;
+    const { oldPassword, newPassword } = formData;
     try {
       if (userId) {
         const data = await dispatch(
-          ChangePassword({ userId, username, oldPassword, newPassword })
+          ChangePassword({ userId, oldPassword, newPassword })
         ).unwrap();
         setPassword(true);
         setStatusTimer(true);
@@ -97,7 +98,11 @@ const Profile = () => {
     e.preventDefault();
     await dispatch(logOut());
   };
-
+  const handelDeleteAccount = async (e, userId) => {
+    e.preventDefault();
+    console.log(userId);
+    await dispatch(deleteAccount({ userId }));
+  };
   useEffect(() => {
     const timer = setTimeout(() => {
       setStatusTimer(false);
@@ -307,7 +312,7 @@ const Profile = () => {
                 )}
 
                 <input
-                  type="text"
+                  type="password"
                   id="oldPassword"
                   onChange={handelChange}
                   value={formData.oldPassword}
@@ -315,7 +320,7 @@ const Profile = () => {
                   className="border-2 rounded-md p-1"
                 />
                 <input
-                  type="text"
+                  type="password"
                   id="newPassword"
                   onChange={handelChange}
                   value={formData.newPassword}
@@ -348,7 +353,10 @@ const Profile = () => {
         </div>
       </ul>
       <div className="flex flex-row justify-between text-center">
-        <span className="text-red-700 border-2 border-solid font-medium p-2 w-1/3 rounded-3xl cursor-pointer hover:bg-red-100">
+        <span
+          className="text-red-700 border-2 border-solid font-medium p-2 w-1/3 rounded-3xl cursor-pointer hover:bg-red-100"
+          onClick={(e) => handelDeleteAccount(e, userId)}
+        >
           Account löschen
         </span>
         <span

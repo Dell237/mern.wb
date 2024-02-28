@@ -21,8 +21,8 @@ import { logOut } from "../../../features/api/apiSlice";
 
 const Favorite = () => {
   const { userId } = useSelector((state) => state.user);
+  const { likedDeals, isLoading } = useSelector((state) => state.deal);
 
-  const [likedPosts, setLikedPosts] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,17 +33,16 @@ const Favorite = () => {
     e.preventDefault();
     try {
       await dispatch(disLikeDeals({ userId, dealId }));
-      return await checkIfLiked();
+      await checkIfLiked();
     } catch (error) {
       await dispatch(logOut());
-      return console.error("Fehler beim Überprüfen des Likes:", error);
+      console.error("Fehler beim Überprüfen des Likes:", error);
     }
   };
   const checkIfLiked = async () => {
     try {
       if (userId !== null) {
-        const response = await dispatch(getLikedDeals({ userId })).unwrap();
-        return await setLikedPosts(response);
+        await dispatch(getLikedDeals({ userId }));
       }
     } catch (error) {
       await dispatch(logOut());
@@ -56,13 +55,25 @@ const Favorite = () => {
     dispatch(getDeals());
     checkIfLiked();
   }, [userId]);
+  if (isLoading) {
+    return (
+      <div className="text-center mt-4">
+        <CircularProgress />
+      </div>
+    );
+  }
   return (
     <div style={{ width: "100%", marginTop: "25px" }}>
       <Typography sx={{ m: 2, fontSize: "1rem" }}>All</Typography>
-      {!likedPosts.length ? (
-        <CircularProgress />
+      {!likedDeals.length ? (
+        <div className="flex flex-col justify-center items-center ">
+          <Typography variant="h4">Ups!</Typography>
+          <Typography variant="h6">
+            Du hast anscheinend noch keine Beiträge gespeichert!
+          </Typography>
+        </div>
       ) : (
-        likedPosts.map((deal) => (
+        likedDeals.map((deal) => (
           <Card key={deal._id} sx={{ display: "flex" }}>
             <Box
               sx={{

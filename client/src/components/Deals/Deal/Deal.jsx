@@ -60,9 +60,14 @@ const Deal = ({ deal, likedPosts, setLike }) => {
         image={deal.selectedFile}
       />
       <CardContent sx={{ flexGrow: 1 }}>
-        <Typography gutterBottom variant="h5" component="h2">
-          {deal.headline}
-        </Typography>
+        <div className="flex flex-row justify-between">
+          <Typography gutterBottom variant="h5" component="h2">
+            {deal.headline}
+          </Typography>
+          <Typography variant="h5" color="green">
+            {deal.preis}€
+          </Typography>
+        </div>
 
         <Typography
           style={{
