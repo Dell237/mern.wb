@@ -17,8 +17,7 @@ import { getDeals, getLikedDeals } from "../../features/api/dealSlice";
 const Deals = () => {
   const { userId } = useSelector((state) => state.user);
 
-  const { dealItem } = useSelector((state) => state.deal);
-  const [likedPosts, setLikedPosts] = useState([]);
+  const { dealItem, likedDeals } = useSelector((state) => state.deal);
   const [Like, setLike] = useState();
 
   const dispatch = useDispatch();
@@ -27,9 +26,7 @@ const Deals = () => {
     const checkIfLiked = async () => {
       try {
         if (userId !== null) {
-          const response = await dispatch(getLikedDeals({ userId })).unwrap();
-
-          return await setLikedPosts(response);
+          await dispatch(getLikedDeals({ userId }));
         }
       } catch (error) {
         console.error("Fehler beim Überprüfen des Likes:", error);
@@ -50,7 +47,7 @@ const Deals = () => {
         <Grid container spacing={4}>
           {dealItem.map((deal) => (
             <Grid item key={deal._id} xs={12} sm={6} md={4} xl={2}>
-              <Deal deal={deal} setLike={setLike} likedPosts={likedPosts} />
+              <Deal deal={deal} setLike={setLike} likedDeals={likedDeals} />
             </Grid>
           ))}
         </Grid>

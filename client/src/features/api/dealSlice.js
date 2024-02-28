@@ -72,7 +72,6 @@ export const disLikeDeals = createAsyncThunk(
       const { data } = await apiPrivat.delete(
         `/all/disliked/${userId}/${dealId}`
       );
-
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue("Fehler");
@@ -164,18 +163,18 @@ export const dealSlice = createSlice({
         state.dealItem = payload.data;
       })
 
-      .addCase(getPostsBySearch.rejected, (state, action) => {
+      .addCase(getPostsBySearch.rejected, (state) => {
         state.isLoading = false;
       })
       .addCase(disLikeDeals.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(disLikeDeals.fulfilled, (state, { payload }) => {
+      .addCase(disLikeDeals.fulfilled, (state) => {
         state.isLoading = false;
-        state.dealItem = payload.data;
+        state.likedDeals = [...state.likedDeals];
       })
 
-      .addCase(disLikeDeals.rejected, (state, action) => {
+      .addCase(disLikeDeals.rejected, (state) => {
         state.isLoading = false;
       })
       .addCase(getAllUserDeal.pending, (state) => {
@@ -186,7 +185,7 @@ export const dealSlice = createSlice({
         state.userDeals = [...payload.deal];
       })
 
-      .addCase(getAllUserDeal.rejected, (state, action) => {
+      .addCase(getAllUserDeal.rejected, (state) => {
         state.isLoading = false;
       })
       .addCase(deleteDeal.pending, (state) => {
@@ -194,12 +193,11 @@ export const dealSlice = createSlice({
       })
       .addCase(deleteDeal.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-        console.log(payload);
         state.userDeals.filter((deal) => deal._id !== payload._id);
 
         state.status = "Deal gelöscht!";
       })
-      .addCase(deleteDeal.rejected, (state, action) => {
+      .addCase(deleteDeal.rejected, (state) => {
         state.isLoading = false;
         state.status = "Deal wurde nicht gelöscht!";
       });

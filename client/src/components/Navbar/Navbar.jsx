@@ -81,8 +81,9 @@ const Navbar = () => {
   };
   const handleKeyPress = (e) => {
     e.preventDefault();
+    setSearch(e.target.value);
     if (search === "" && e.key === 46) {
-      navigate(`search?searchQuery=${"none"}`);
+      navigate(`/search?searchQuery=${"none"}`);
     }
     searchPost();
 
@@ -195,9 +196,8 @@ const Navbar = () => {
                   <SearchIcon />
                 </SearchIconWrapper>
                 <StyledInputBase
-                  onKeyDown={handleKeyPress}
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => handleKeyPress(e)}
                   placeholder="Search…"
                   inputProps={{ "aria-label": "search" }}
                   sx={{ p: 0, pr: 2 }}

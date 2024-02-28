@@ -7,14 +7,13 @@ import {
   Typography,
   Button,
   IconButton,
-  Hidden,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { useDispatch, useSelector } from "react-redux";
 import { likeDeal } from "../../../features/api/dealSlice";
 
-const Deal = ({ deal, likedPosts, setLike }) => {
+const Deal = ({ deal, setLike, likedDeals }) => {
   const { userId } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
@@ -82,7 +81,7 @@ const Deal = ({ deal, likedPosts, setLike }) => {
       <CardActions className="flex justify-between ">
         <IconButton
           aria-label="add to favorites"
-          disabled={likedPosts.some((LikedPost) =>
+          disabled={likedDeals.some((LikedPost) =>
             LikedPost._id === deal._id ? true : false
           )}
           onClick={(e) => {
