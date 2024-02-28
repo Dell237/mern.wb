@@ -46,7 +46,7 @@ const Deals = () => {
       <Container sx={{ pt: 7 }} maxWidth="xl">
         <Grid container spacing={4}>
           {dealItem.map((deal) => (
-            <Grid item key={deal._id} xs={12} sm={6} md={4} xl={2}>
+            <Grid item key={deal._id} xs={12} sm={6} md={4} xl={3}>
               <Deal deal={deal} setLike={setLike} likedDeals={likedDeals} />
             </Grid>
           ))}

@@ -8,6 +8,7 @@ import {
   updateUsername,
 } from "../features/api/apiSlice";
 import FileBase from "react-file-base64";
+import { getDeals } from "../features/api/dealSlice";
 
 const Profile = () => {
   const { userId, user, isLoading, status } = useSelector(
@@ -97,6 +98,7 @@ const Profile = () => {
   const handleSignOut = async (e) => {
     e.preventDefault();
     await dispatch(logOut());
+    await dispatch(getDeals());
   };
   const handelDeleteAccount = async (e, userId) => {
     e.preventDefault();

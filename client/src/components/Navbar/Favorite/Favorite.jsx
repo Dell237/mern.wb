@@ -141,8 +141,7 @@ const Favorite = () => {
                     sx={{
                       bgcolor: "rgb(73, 190, 37, 1)",
                       color: "white",
-                      pr: 7,
-                      pl: 7,
+
                       borderRadius: 2.5,
                       "&:hover": {
                         bgcolor: "rgb(68, 227, 19, 1)",
