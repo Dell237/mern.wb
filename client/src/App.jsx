@@ -23,12 +23,12 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Deals />} />
         <Route path="/search" element={<Deals />} />
-        <Route path="/Sign-In" element={<SignIn />} />
-        <Route path="/Sign-Up" element={<SignUp />} />
+        <Route path="/SignIn" element={<SignIn />} />
+        <Route path="/SignUp" element={<SignUp />} />
 
         <Route path="/SignUp/:id" element={<CheckSignUp />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/forgot-password/:id" element={<ResetPassword />} />
+        <Route path="/forgotPassword" element={<ForgotPassword />} />
+        <Route path="/forgotPassword/:id" element={<ResetPassword />} />
         <Route element={<PrivatRoute />}>
           <Route path="/create" element={<CreateDeal />} />
           <Route path="/Profile" element={<Profile />} />

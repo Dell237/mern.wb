@@ -30,7 +30,7 @@ const SignUp = () => {
     try {
       await dispatch(regUser(formData));
       setFormData({ username: "", email: "", password: "" });
-      return navigate("/Sign-In");
+      return navigate("/SignIn");
     } catch (error) {
       if (!error?.response) {
         setErrMsg("No Server Response");
@@ -105,7 +105,7 @@ const SignUp = () => {
       </form>
       <div className="flex my-2 gap-2">
         <p>Have an account?</p>
-        <Link to="/Sign-In">
+        <Link to="/SignIn">
           <span className="text-blue-700 font-semibold">Sign In</span>
         </Link>
       </div>

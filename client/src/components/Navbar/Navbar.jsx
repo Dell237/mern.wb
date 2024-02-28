@@ -207,7 +207,7 @@ const Navbar = () => {
                 <Box sx={{ flexGrow: 0, display: { xs: "flex", md: "flex" } }}>
                   <Button
                     component={Link}
-                    to="/Sign-In"
+                    to="/SignIn"
                     sx={{ my: 2, color: "white", display: "block" }}
                   >
                     login
@@ -343,7 +343,7 @@ const Navbar = () => {
   //             </Link>
   //           </>
   //         ) : (
-  //           <Link to="/Sign-In">
+  //           <Link to="/SignIn">
   //             <li>Sign In</li>
   //           </Link>
   //         )}

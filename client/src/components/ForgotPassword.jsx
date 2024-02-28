@@ -33,7 +33,7 @@ const ForgotPassword = () => {
         const data = await dispatch(forgotPassword({ email })).unwrap();
         await setStatusTimer(true);
         setErrMsg(status);
-        navigate("/Sign-In");
+        navigate("/SignIn");
 
         return data;
       }

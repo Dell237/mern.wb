@@ -242,7 +242,7 @@ const forgotPassword = async (req, res) => {
       pass: process.env.NODEMAILER_PASS,
     },
   });
-  const link = `http://localhost:5173/forgot-password/${user._id}?token=${token}`;
+  const link = `https://dely-mern.netlify.app/forgotPassword/${user._id}?token=${token}`;
   const mailOptions = {
     from: process.env.NODEMAILER_USER,
     to: email,
@@ -250,7 +250,8 @@ const forgotPassword = async (req, res) => {
     text: `
     Hello,
 
-    Someone just requested to change your Deals account's password. If this was you, click on the link below to reset it.
+    Someone just requested to change your Deals account's password.
+    If this was you, click on the link below to reset it.
     ${link}
 
     This link will expire within 1 hours.

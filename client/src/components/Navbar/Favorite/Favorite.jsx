@@ -47,7 +47,7 @@ const Favorite = () => {
     } catch (error) {
       await dispatch(logOut());
       console.error("Fehler beim Überprüfen des Likes:", error);
-      return navigate("/Sign-In", { state: { from: location }, replace: true });
+      return navigate("/SignIn", { state: { from: location }, replace: true });
     }
   };
 

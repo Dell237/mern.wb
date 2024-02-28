@@ -59,7 +59,6 @@ export const ChangePassword = createAsyncThunk(
   "user/changePassword",
 
   async ({ userId, oldPassword, newPassword }, thunkAPI) => {
-    console.log({ userId, oldPassword, newPassword });
     try {
       const resp = await apiPrivat.post(`/auth/${userId}/updatePassword`, {
         oldPassword,
@@ -101,7 +100,7 @@ export const forgotPassword = createAsyncThunk(
   "user/Forgot-Password",
   async ({ email }, thunkAPI) => {
     try {
-      const resp = await axios.post(`/auth/forgot-password`, {
+      const resp = await axios.post(`/auth/forgotPassword`, {
         email,
       });
       return resp.data;
@@ -114,9 +113,8 @@ export const resetPassword = createAsyncThunk(
   "user/Reset-Password",
   async ({ id, token, Password }, thunkAPI) => {
     try {
-      console.log({ id, token, Password });
       const resp = await axios.post(
-        `/auth/forgot-password/${id}?token=${token}`,
+        `/auth/forgotPassword/${id}?token=${token}`,
         {
           Password,
         }
