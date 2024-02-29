@@ -82,7 +82,7 @@ const Deal = ({ deal, setLike, likedDeals }) => {
         <IconButton
           aria-label="add to favorites"
           disabled={likedDeals.some((LikedPost) =>
-            LikedPost._id === deal._id ? true : false
+            LikedPost ? (LikedPost._id === deal._id ? true : false) : false
           )}
           onClick={(e) => {
             handleLike(e, deal._id, userId);

@@ -14,6 +14,7 @@ import {
   Favorite,
   CheckSignUp,
   UserDeal,
+  Gutscheine,
 } from "./components/index";
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/search" element={<Deals />} />
         <Route path="/SignIn" element={<SignIn />} />
         <Route path="/SignUp" element={<SignUp />} />
+        <Route path="/Gutscheine" element={<Gutscheine />} />
 
         <Route path="/SignUp/:id" element={<CheckSignUp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />

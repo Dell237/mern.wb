@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 
 const PrivatRoute = () => {
-  const { user } = useSelector((state) => state.user);
-  return user ? <Outlet /> : <Navigate to="/SignIn" />;
+  const { accessToken } = useSelector((state) => state.user);
+  return accessToken ? <Outlet /> : <Navigate to="/SignIn" />;
 };
 
 export default PrivatRoute;

@@ -31,7 +31,16 @@ import { Logout, PersonAdd } from "@mui/icons-material";
 import { getPostsBySearch } from "../../features/api/dealSlice";
 
 const Navbar = () => {
-  const pages = ["Home", "Deals", "Gutscheine"];
+  const pages = [
+    {
+      page: "Home",
+      link: "/",
+    },
+    {
+      page: "Gutscheine",
+      link: "/Gutscheine",
+    },
+  ];
 
   const { user } = useSelector((state) => state.user);
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -150,8 +159,14 @@ const Navbar = () => {
                   }}
                 >
                   {pages.map((page) => (
-                    <MenuItem key={page} onClick={handleCloseNavMenu}>
-                      <Typography textAlign="center">{page}</Typography>
+                    <MenuItem key={page.page} onClick={handleCloseNavMenu}>
+                      <Typography
+                        component={Link}
+                        to={page.link}
+                        textAlign="center"
+                      >
+                        {page.page}
+                      </Typography>
                     </MenuItem>
                   ))}
                 </Menu>
@@ -183,11 +198,13 @@ const Navbar = () => {
               >
                 {pages.map((page) => (
                   <Button
-                    key={page}
+                    key={page.page}
                     onClick={handleCloseNavMenu}
+                    component={Link}
+                    to={page.link}
                     sx={{ my: 2, color: "white", display: "block" }}
                   >
-                    {page}
+                    {page.page}
                   </Button>
                 ))}
               </Box>

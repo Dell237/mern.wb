@@ -12,6 +12,7 @@ import ResetPassword from "./ResetPassword";
 import Favorite from "./Navbar/Favorite/Favorite";
 import CheckSignUp from "./SignUp/CheckSignUp";
 import UserDeal from "./UserDeal";
+import Gutscheine from "./Gutscheine";
 export {
   Deals,
   About,
@@ -27,4 +28,5 @@ export {
   ResetPassword,
   Favorite,
   UserDeal,
+  Gutscheine,
 };

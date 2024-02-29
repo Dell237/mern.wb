@@ -246,7 +246,6 @@ export const apiSlice = createSlice({
         state.isLoading = false;
         state.status = " updateProfileBild, erfolgreich geändert!";
         state.user = payload.user;
-        console.log(payload);
       })
       .addCase(updateProfileBild.rejected, (state, action) => {
         state.isLoading = false;
