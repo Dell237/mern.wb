@@ -2,6 +2,7 @@ const { StatusCodes } = require("http-status-codes");
 const Deal = require("../models/Deals");
 const { NotFoundError, BadRequestError } = require("../errors");
 const { default: mongoose } = require("mongoose");
+const Like = require("../models/Like");
 
 const getPostsBySearch = async (req, res) => {
   const { searchQuery } = req.query;
@@ -55,6 +56,8 @@ const deleteDeal = async (req, res) => {
     await Deal.findByIdAndDelete({
       _id,
     });
+    let dealId = _id;
+    await Like.findOneAndDelete({ dealId });
   }
   res.status(StatusCodes.OK).json({ _id });
 };

@@ -16,7 +16,7 @@ const register = async (req, res) => {
       pass: process.env.NODEMAILER_PASS,
     },
   });
-  const link = `http://localhost:5173/signup/${user._id}?token=${token}`;
+  const link = `https://dely-mern.netlify.app/signup/${user._id}?token=${token}`;
   const mailOptions = {
     from: process.env.NODEMAILER_USER,
     to: email,
@@ -32,7 +32,7 @@ const register = async (req, res) => {
 
     You can remove this account by clicking on the link below.
 
-    http://localhost:5173/unintended-registration/${user._id}/${email}
+    https://dely-mern.netlify.app/unintended-registration/${user._id}/${email}
 
 
     Thanks, The Deals Team`,
