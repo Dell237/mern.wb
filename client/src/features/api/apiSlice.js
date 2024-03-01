@@ -1,29 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios, { apiPrivat } from "../../api/axios";
 
-export const regUser = createAsyncThunk(
-  "user/register",
-  async ({ username, email, password }, thunkAPI) => {
-    try {
-      const resp = await axios.post(
-        `/auth/register`,
-        JSON.stringify({
-          username,
-          email,
-          password,
-        }),
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-      return resp.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue("something went wrong");
-    }
-  }
-);
-
 export const loginUser = createAsyncThunk(
   "user/login",
   async ({ email, password }, thunkAPI) => {
@@ -37,7 +14,7 @@ export const loginUser = createAsyncThunk(
       return resp.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        "something went wrong, Please check your email and password!"
+        "Es ist ein Fehler aufgetreten. Bitte überprüfen Sie Ihre E-Mail-Adresse und Ihr Passwort!"
       );
     }
   }
@@ -170,24 +147,10 @@ export const apiSlice = createSlice({
       state.accessToken = accessToken;
       state.userId = user.userId;
     },
-    log_Out: (state, action) => {
-      state.user = null;
-      state.token = null;
-    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(regUser.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(regUser.fulfilled, (state, action) => {
-        console.log(action);
-        state.isLoading = false;
-        state.user = action.payload;
-      })
-      .addCase(regUser.rejected, (state, action) => {
-        state.isLoading = false;
-      })
+
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
       })
@@ -207,6 +170,7 @@ export const apiSlice = createSlice({
         state.isLoading = false;
         state.user = null;
         state.userId = null;
+        state.accessToken = null;
       })
       .addCase(logOut.rejected, (state, action) => {
         state.isLoading = false;

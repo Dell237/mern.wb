@@ -1,39 +1,36 @@
-import React from "react";
 import {
+  Button,
   Card,
-  CardMedia,
   CardActions,
   CardContent,
+  CardMedia,
   Typography,
-  Button,
-  IconButton,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { likeDeal } from "../../../features/api/dealSlice";
+import {
+  disLikeDeals,
+  getLikedDeals,
+} from "../../../../features/api/dealSlice";
+import { logOut } from "../../../../features/api/apiSlice";
 
-const Deal = ({ deal, setLike, likedDeals }) => {
+const Favorite = ({ deal }) => {
   const { userId } = useSelector((state) => state.user);
-
   const dispatch = useDispatch();
 
   const openInNewTab = (url) => {
     window.open(url, "_blank", "noreferrer");
   };
 
-  const handleLike = async (e, dealId, userId) => {
+  const handleDisLike = async (e, dealId) => {
     e.preventDefault();
-
     try {
-      if (dealId && userId) {
-        const resp = await dispatch(likeDeal({ dealId, userId })).unwrap();
-
-        await setLike(deal.likeCount + 1);
-        return resp;
-      }
+      await dispatch(disLikeDeals({ userId, dealId }));
+      await dispatch(getLikedDeals({ userId }));
     } catch (error) {
-      console.log(error);
+      await dispatch(logOut());
+      console.error("Fehler beim Überprüfen des Likes:", error);
     }
   };
 
@@ -49,12 +46,10 @@ const Deal = ({ deal, setLike, likedDeals }) => {
       <CardMedia
         component="img"
         sx={{
-          // // 16:9
-
-          objectFit: "contain",
           flexBasis: 200,
           minWidth: 190,
           minHeight: 190,
+          objectFit: "contain",
         }}
         image={deal.selectedFile}
         alt="pic"
@@ -80,37 +75,34 @@ const Deal = ({ deal, setLike, likedDeals }) => {
         </Typography>
       </CardContent>
       <CardActions className="flex justify-between ">
-        <IconButton
-          aria-label="add to favorites"
-          disabled={likedDeals.some((LikedPost) =>
-            LikedPost ? (LikedPost._id === deal._id ? true : false) : false
-          )}
-          onClick={(e) => {
-            handleLike(e, deal._id, userId);
+        <Button
+          sx={{
+            color: "rgb(73, 190, 37, 1)",
+            "&:hover": {
+              color: "rgb(68, 227, 19, 1)",
+            },
           }}
+          onClick={(e) => handleDisLike(e, deal._id)}
         >
-          <FavoriteIcon fontSize="small" />
-          &nbsp; {deal.likeCount}
-        </IconButton>
+          <FavoriteIcon />
+        </Button>
         <Button
           sx={{
             bgcolor: "rgb(73, 190, 37, 1)",
             color: "white",
-            position: "relative",
-            pr: 7,
-            pl: 7,
+
             borderRadius: 2.5,
             "&:hover": {
-              bgcolor: "rgb(69, 200, 25, 1)",
+              bgcolor: "rgb(68, 227, 19, 1)",
             },
           }}
           onClick={() => openInNewTab(deal.link)}
         >
-          Zum Deal <OpenInNewIcon />
+          Zum Deal
         </Button>
       </CardActions>
     </Card>
   );
 };
 
-export default Deal;
+export default Favorite;

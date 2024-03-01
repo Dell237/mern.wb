@@ -55,18 +55,11 @@ const UserDeal = () => {
             <Box
               sx={{
                 display: "flex",
-                flexDirection: "row",
+                flexDirection: "column",
                 width: "100%",
                 gap: 1,
                 m: 2,
                 p: 2,
-                bgcolor: (theme) =>
-                  theme.palette.mode === "dark" ? "#101010" : "#fff",
-                color: (theme) =>
-                  theme.palette.mode === "dark" ? "grey.300" : "grey.800",
-                border: "1px solid",
-                borderColor: (theme) =>
-                  theme.palette.mode === "dark" ? "grey.800" : "grey.300",
                 borderRadius: 2,
                 fontSize: "0.875rem",
                 fontWeight: "700",
@@ -74,7 +67,7 @@ const UserDeal = () => {
             >
               <CardMedia
                 component="img"
-                sx={{ width: 144, height: 144, m: 1 }}
+                sx={{ width: 144, height: 144, m: 1, alignSelf: "center" }}
                 image={deal.selectedFile}
                 alt="pic"
               />
@@ -90,24 +83,19 @@ const UserDeal = () => {
                   <Typography component="div" variant="h5">
                     {deal.headline}
                   </Typography>
-                  <Typography
-                    style={{
-                      lineHeight: "1.4em",
-                      maxHeight: "4.2em",
-                      overflow: "hidden",
-                    }}
-                  >
-                    {deal.message}
-                  </Typography>
                 </CardContent>
                 <CardActions
-                  sx={{ display: "flex", justifyContent: "space-between" }}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
                 >
-                  <div>
+                  <div className="self-center">
                     <FavoriteIcon />
                     &nbsp; {deal.likeCount}
                   </div>
-                  <div className="flex gap-1">
+                  <div className="flex flex-col gap-3">
                     <Button
                       onClick={(e) => handleDeleteDeal(e, deal._id)}
                       sx={{

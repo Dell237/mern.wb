@@ -11,7 +11,7 @@ import {
   ScrollToTop,
   ForgotPassword,
   ResetPassword,
-  Favorite,
+  Favorites,
   CheckSignUp,
   UserDeal,
   Gutscheine,
@@ -35,7 +35,7 @@ const App = () => {
           <Route path="/create" element={<CreateDeal />} />
           <Route path="/Profile" element={<Profile />} />
           <Route path="/About" element={<About />} />
-          <Route path="/Favorite" element={<Favorite />} />
+          <Route path="/Favorite" element={<Favorites />} />
           <Route path="/Profile/deals" element={<UserDeal />} />
         </Route>
       </Routes>

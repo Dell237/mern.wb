@@ -39,11 +39,7 @@ const register = async (req, res) => {
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-    } else {
-      return res.sendStatus(StatusCodes.OK);
-    }
+    return res.sendStatus(StatusCodes.OK);
   });
 };
 

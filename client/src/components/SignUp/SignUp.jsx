@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { regUser } from "../../features/api/apiSlice";
+import { useSelector } from "react-redux";
+import axios from "../../api/axios";
+
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -13,7 +15,6 @@ const SignUp = () => {
   const navigate = useNavigate();
   const userRef = useRef();
   const errRef = useRef();
-  const dispatch = useDispatch();
   const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
@@ -27,17 +28,27 @@ const SignUp = () => {
   };
   const handelSubmit = async (e) => {
     e.preventDefault();
+    const v1 = PWD_REGEX.test(formData.password);
+    if (!v1) {
+      setErrMsg(
+        "Kennwort von 8 bis 24 Zeichen. Muss Groß- und Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten"
+      );
+      return;
+    }
     try {
-      await dispatch(regUser(formData));
+      await axios.post(`/auth/register`, JSON.stringify(formData), {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
       setFormData({ username: "", email: "", password: "" });
-      return navigate("/SignIn");
+      navigate("/SignIn");
     } catch (error) {
       if (!error?.response) {
-        setErrMsg("No Server Response");
-      } else if (error.response?.status === 409) {
-        setErrMsg("Username Taken");
+        setErrMsg("Keine Serverantwort");
+      } else if (error.response?.status === 400) {
+        setErrMsg("Benutzername vergeben");
       } else {
-        setErrMsg("Registration Failed");
+        setErrMsg("Registrierung fehlgeschlagen");
       }
       errRef.current.focus();
     }
@@ -54,7 +65,7 @@ const SignUp = () => {
         ref={errRef}
         className={
           errMsg
-            ? "bg-red-400 text-fuchsia-50 font-bold p-2 mt-2"
+            ? "border border-solid border-2 border-red-600  text-red-700 font-medium  p-2 mt-2"
             : "absolute -left-2/4"
         }
         aria-live="assertive"
@@ -64,7 +75,6 @@ const SignUp = () => {
       <form className="flex flex-col gap-4" onSubmit={handelSubmit}>
         <input
           type="text"
-          name="username"
           id="username"
           value={formData.username}
           placeholder="username"
@@ -75,7 +85,7 @@ const SignUp = () => {
           required
         />
         <input
-          type="text"
+          type="email"
           id="email"
           value={formData.email}
           placeholder="email"
@@ -98,7 +108,7 @@ const SignUp = () => {
 
         <button
           type="submit"
-          className="bg-black text-white p-2 rounded-md uppercase hover:opacity-75 disabled:opacity-80"
+          className="bg-blue-700 text-white p-2 rounded-md uppercase hover:opacity-75 disabled:opacity-80"
         >
           Sign Up
         </button>

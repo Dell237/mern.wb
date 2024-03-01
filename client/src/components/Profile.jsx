@@ -10,6 +10,8 @@ import {
 import FileBase from "react-file-base64";
 import { getDeals } from "../features/api/dealSlice";
 
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+
 const Profile = () => {
   const { userId, user, isLoading, status } = useSelector(
     (state) => state.user
@@ -22,6 +24,7 @@ const Profile = () => {
   const [password, setPassword] = useState(true);
   const [statusTimer, setStatusTimer] = useState(false);
   const [changePic, setChangePic] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
 
   const [formData, setFormData] = useState({
     username: "",
@@ -81,6 +84,13 @@ const Profile = () => {
   const handleChangePassword = async (e, userId) => {
     e.preventDefault();
     const { oldPassword, newPassword } = formData;
+    const v1 = PWD_REGEX.test(newPassword);
+    if (!v1) {
+      setErrMsg(
+        "Kennwort von 8 bis 24 Zeichen. Muss Groß- und Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten"
+      );
+      return;
+    }
     try {
       if (userId) {
         const data = await dispatch(
@@ -110,7 +120,7 @@ const Profile = () => {
       setStatusTimer(false);
     }, 5000);
     return () => clearTimeout(timer);
-  }, [password, username, user]);
+  }, [username, user]);
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -278,6 +288,16 @@ const Profile = () => {
             )}
           </form>
         </li>
+        <p
+          className={
+            errMsg
+              ? "border border-solid border-2 border-red-600  text-red-700 font-medium  p-2 mt-2"
+              : "absolute -left-2/4"
+          }
+          aria-live="assertive"
+        >
+          {errMsg}
+        </p>
         <li className="grid grid-cols-2">
           <span className="text-left text-lg items-center">
             <label>

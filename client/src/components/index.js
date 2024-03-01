@@ -9,7 +9,7 @@ import Deals from "./Deals/Deals";
 import ScrollToTop from "./Navbar/ScrollToTop";
 import ForgotPassword from "./ForgotPassword";
 import ResetPassword from "./ResetPassword";
-import Favorite from "./Navbar/Favorite/Favorite";
+import Favorites from "./Navbar/Favorites/Favorites";
 import CheckSignUp from "./SignUp/CheckSignUp";
 import UserDeal from "./UserDeal";
 import Gutscheine from "./Gutscheine";
@@ -26,7 +26,7 @@ export {
   ScrollToTop,
   ForgotPassword,
   ResetPassword,
-  Favorite,
+  Favorites,
   UserDeal,
   Gutscheine,
 };
