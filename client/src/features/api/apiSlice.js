@@ -106,7 +106,6 @@ export const checkSignUp = createAsyncThunk(
   "user/checkSignUp",
   async ({ id: userId, token }, thunkAPI) => {
     try {
-      console.log({ userId, token });
       const { data } = await axios.post(
         `/auth/signup/${userId}?token=${token}`
       );
@@ -182,7 +181,6 @@ export const apiSlice = createSlice({
       .addCase(ChangePassword.fulfilled, (state, action) => {
         state.isLoading = false;
         state.status = "Password erfolgreich geändert!";
-        console.log(action);
       })
       .addCase(ChangePassword.rejected, (state, action) => {
         state.isLoading = false;
@@ -196,7 +194,6 @@ export const apiSlice = createSlice({
         state.isLoading = false;
         state.status = " username, erfolgreich geändert!";
         state.user.username = payload.user.username;
-        console.log(payload);
       })
       .addCase(updateUsername.rejected, (state, action) => {
         state.isLoading = false;
@@ -222,7 +219,6 @@ export const apiSlice = createSlice({
       .addCase(forgotPassword.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.status = " Email erfolgreich gesendet!";
-        console.log(payload);
       })
       .addCase(forgotPassword.rejected, (state, action) => {
         state.isLoading = false;
@@ -235,7 +231,6 @@ export const apiSlice = createSlice({
       .addCase(resetPassword.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.status = " Password erfolgreich geändert!";
-        console.log(payload);
       })
       .addCase(resetPassword.rejected, (state, action) => {
         state.isLoading = false;
@@ -248,7 +243,6 @@ export const apiSlice = createSlice({
       .addCase(checkSignUp.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.status = payload;
-        console.log(payload);
       })
       .addCase(checkSignUp.rejected, (state, action) => {
         state.isLoading = false;

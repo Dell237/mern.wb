@@ -1,8 +1,8 @@
 import axios from "axios";
 import { setCredentials } from "../features/api/apiSlice";
 
-// const BASE_URL = "https://mern-wb.vercel.app/api/v1";
-const BASE_URL = "http://localhost:5000/api/v1";
+const BASE_URL = "https://mern-wb.vercel.app/api/v1";
+// const BASE_URL = "http://localhost:5000/api/v1";
 
 export default axios.create({
   baseURL: BASE_URL,

@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 
 const auth = (req, res, next) => {
   // const token = req.cookies.jwt;
-  // console.log(token);
   // if (!token) {
   //   throw new UnauthenticatedError("Authentication invalid!");
   // }
@@ -18,7 +17,6 @@ const auth = (req, res, next) => {
   if (!authHeaders || !authHeaders.startsWith("Bearer ")) {
     throw new UnauthenticatedError("Authentication invalid!!!");
   }
-  console.log({ "accessToken:": authHeaders });
   const token = authHeaders.split(" ")[1];
   try {
     const check = jwt.verify(token, process.env.JWT_ACCESS_SECRET);

@@ -23,7 +23,7 @@ const UserDeal = () => {
       await dispatch(deleteDeal({ userId, dealId }));
       await getUserDeals();
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   };
   const getUserDeals = async () => {

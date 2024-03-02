@@ -23,6 +23,7 @@ const Profile = () => {
   const [email, setEmail] = useState(true);
   const [password, setPassword] = useState(true);
   const [statusTimer, setStatusTimer] = useState(false);
+  const [pwdTimer, setPwdTimer] = useState(false);
   const [changePic, setChangePic] = useState(false);
   const [errMsg, setErrMsg] = useState("");
 
@@ -42,7 +43,6 @@ const Profile = () => {
     try {
       const { profileBild } = formData;
       if (profileBild.length === 0 && !changePic) {
-        console.log(profileBild.length, changePic);
         const data = await dispatch(
           updateProfileBild({ userId, profileBild })
         ).unwrap();
@@ -67,7 +67,6 @@ const Profile = () => {
       const data = await dispatch(
         updateUsername({ userId, username })
       ).unwrap();
-      console.log(data);
       setUsername(true);
       setFormData({ ...formData, [username]: user.username });
       setStatusTimer(true);
@@ -89,6 +88,7 @@ const Profile = () => {
       setErrMsg(
         "Kennwort von 8 bis 24 Zeichen. Muss Groß- und Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten"
       );
+      setPwdTimer(true);
       return;
     }
     try {
@@ -97,8 +97,10 @@ const Profile = () => {
           ChangePassword({ userId, oldPassword, newPassword })
         ).unwrap();
         setPassword(true);
+        setPwdTimer(false);
         setStatusTimer(true);
-
+        formData.newPassword = "";
+        formData.oldPassword = "";
         return data;
       }
     } catch (error) {
@@ -112,7 +114,6 @@ const Profile = () => {
   };
   const handelDeleteAccount = async (e, userId) => {
     e.preventDefault();
-    console.log(userId);
     await dispatch(deleteAccount({ userId }));
   };
   useEffect(() => {
@@ -120,7 +121,7 @@ const Profile = () => {
       setStatusTimer(false);
     }, 5000);
     return () => clearTimeout(timer);
-  }, [username, user]);
+  }, [password, username, user]);
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -288,16 +289,19 @@ const Profile = () => {
             )}
           </form>
         </li>
-        <p
-          className={
-            errMsg
-              ? "border border-solid border-2 border-red-600  text-red-700 font-medium  p-2 mt-2"
-              : "absolute -left-2/4"
-          }
-          aria-live="assertive"
-        >
-          {errMsg}
-        </p>
+        {pwdTimer && (
+          <p
+            className={
+              errMsg
+                ? "border border-solid border-2 border-red-600  text-red-700 font-medium  p-2 mt-2"
+                : "absolute -left-2/4"
+            }
+            aria-live="assertive"
+          >
+            {errMsg}
+          </p>
+        )}
+
         <li className="grid grid-cols-2">
           <span className="text-left text-lg items-center">
             <label>

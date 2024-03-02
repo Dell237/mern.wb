@@ -46,7 +46,6 @@ const deleteDeal = async (req, res) => {
     user: { userId },
     params: { id: _id },
   } = req;
-  console.log(userId, _id);
   if (!mongoose.Types.ObjectId.isValid(userId)) return res.sendStatus(404);
   const findDeal = await Deal.findOne({ _id, createdBy: userId });
   if (!findDeal) {

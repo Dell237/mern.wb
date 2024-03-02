@@ -83,7 +83,6 @@ const login = async (req, res) => {
     },
     { new: true }
   );
-  console.log(result);
   res.cookie("jwt", refreshToken, {
     httpOnly: true,
     sameSite: "None",
@@ -104,7 +103,6 @@ const login = async (req, res) => {
 
 const updatePassword = async (req, res) => {
   const { userId: _id } = req.params;
-  console.log(_id);
   const { oldPassword, newPassword } = req.body;
   if (!mongoose.Types.ObjectId.isValid(_id))
     return res.status(404).send(`Kein Benutzer with that id ${_id}`);
@@ -148,7 +146,6 @@ const updatePassword = async (req, res) => {
 
 const updateUsername = async (req, res) => {
   const { userId: _id } = req.params;
-  console.log(_id);
   const { username } = req.body;
   if (!mongoose.Types.ObjectId.isValid(_id))
     return res.status(404).send(`Kein Benutzer with that id ${_id}`);
@@ -174,7 +171,6 @@ const updateUsername = async (req, res) => {
 const updateProfileBild = async (req, res) => {
   const { userId: _id } = req.params;
   const { profileBild } = req.body;
-  console.log(_id);
   if (!mongoose.Types.ObjectId.isValid(_id))
     return res.status(404).send(`Kein Benutzer with that id ${_id}`);
 
@@ -324,7 +320,6 @@ const logout = async (req, res) => {
   if (!cookies?.jwt) return res.sendStatus(204);
 
   const refreshToken = cookies.jwt;
-  console.log(refreshToken);
 
   // Is refreshToken in db?
   const foundUser = await User.findOne({ refreshToken }).exec();
